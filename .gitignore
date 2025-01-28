@@ -1,0 +1,14 @@
+# Backend ignore files
+/backend/target/
+/backend/.idea/
+/backend/.classpath
+/backend/.project
+/backend/.settings
+
+# Frontend ignore files
+/frontend/node_modules/
+/frontend/.next/
+/frontend/build/
+
+/.env
+.DS_Store

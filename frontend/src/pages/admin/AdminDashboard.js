@@ -20,7 +20,7 @@ function AdminDashboard() {
                 <Link to="/admin/manage-customers" className="nav-link text-white">Manage Customers</Link>
               </li>
               <li className="nav-item">
-                <Link to="/admin/reports" className="nav-link text-white">Reports</Link>
+                <Link to="/admin/reports" className="nav-link text-white">Manage Cars</Link>
               </li>
               <li className="nav-item">
                 <Link to="/admin/settings" className="nav-link text-white">Settings</Link>

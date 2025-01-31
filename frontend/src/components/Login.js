@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();  // This hook provides the navigate function
@@ -14,7 +14,7 @@ function Login() {
     try {
       // Sending a POST request with form data
       const response = await axios.post('http://localhost:8080/auth/login', 
-        `username=${username}&password=${password}`, 
+        `email=${email}&password=${password}`, 
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded', // Set correct content type
@@ -41,7 +41,7 @@ function Login() {
     } catch (error) {
       // Handle any error from the backend
       if (error.response) {
-        setErrorMessage('Invalid username or password.');
+        setErrorMessage('Invalid email or password.');
       } else {
         setErrorMessage('An error occurred. Please try again later.');
       }
@@ -53,12 +53,12 @@ function Login() {
       <h2>Login to Mega City Cab</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="username">Username</label>
+          <label htmlFor="email">Email</label>
           <input
             type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>

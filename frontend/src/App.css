@@ -35,3 +35,19 @@ button {
 button:hover {
   background-color: #45a049;
 }
+
+/* Slow down the collapse transition using max-height */
+.collapse {
+  transition: max-height 0.8s ease; /* Adjust the speed of collapse */
+  max-height: 0; /* Default to collapsed */
+}
+
+.collapse.show {
+  max-height: 500px; /* Max height when expanded, can adjust based on content */
+}
+
+/* Rotate the icon smoothly */
+.collapse.show + .nav-item i {
+  transform: rotate(180deg);
+  transition: transform 0.8s ease; /* Smoothly rotate the icon */
+}

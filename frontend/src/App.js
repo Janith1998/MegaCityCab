@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<LoginPage />} />
         <Route exact path="LoginPage" element={<LoginPage />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/*" element={<AdminDashboard />} />
         <Route path="/customer/dashboard" element={<CustomerDashboard />} />
         <Route path="/driver/dashboard" element={<DriverDashboard />} />
       </Routes>

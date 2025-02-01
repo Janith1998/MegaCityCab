@@ -43,6 +43,11 @@ public class CarController {
     public Car updateCarAvailability(@PathVariable String id, @RequestBody boolean available) {
     return carService.updateCarAvailability(id, available);
 }
+
+    @PutMapping("/{id}")
+    public Car updateCar(@PathVariable String id, @RequestBody Car updatedCar) {
+        return carService.updateCar(id, updatedCar);
+    }
     
         
 

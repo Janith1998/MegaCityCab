@@ -33,4 +33,16 @@ public class CarService {
         return carRepository.save(car); // This will return the updated car
     }
 
+    public Car updateCar(String id, Car updatedCar) {
+        Car car = carRepository.findById(id).orElseThrow(() -> new RuntimeException("Car not found"));
+        car.setBrand(updatedCar.getBrand());
+        car.setModel(updatedCar.getModel());
+        car.setLicensePlate(updatedCar.getLicensePlate());
+        car.setImage(updatedCar.getImage()); // Update image if provided
+        return carRepository.save(car);
+    }
+    
+
 }
+
+

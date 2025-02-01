@@ -22,12 +22,8 @@ public class CarService {
         return carRepository.findAll();  // Retrieve all cars from the database
     }
 
-    public Car assignCarToDriver(String carId, String driverId) {
-        Car car = carRepository.findById(carId).orElse(null);
-        if (car != null) {
-            car.setDriverId(driverId);  // Assign the driver to the car
-            return carRepository.save(car);  // Save the updated car
-        }
-        return null;
+    public void deleteCar(String id) {
+        carRepository.deleteById(id);  // Delete the car from the repository
     }
+
 }

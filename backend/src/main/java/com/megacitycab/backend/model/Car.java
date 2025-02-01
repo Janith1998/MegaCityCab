@@ -11,16 +11,16 @@ public class Car {
     private String brand;
     private String model;
     private String licensePlate;
-    private String driverId; // Link to the driver
+    private String image;  // Base64 Image Field
 
     public Car() {}
 
     // Constructor
-    public Car(String brand, String model, String licensePlate, String driverId) {
+    public Car(String brand, String model, String licensePlate, String image) {
         this.brand = brand;
         this.model = model;
         this.licensePlate = licensePlate;
-        this.driverId = driverId;
+        this.image = image;
     }
 
     // Getters and Setters
@@ -56,11 +56,11 @@ public class Car {
         this.licensePlate = licensePlate;
     }
 
-    public String getDriverId() {
-        return driverId;
+    public String getImage() {
+        return image;
     }
 
-    public void setDriverId(String driverId) {
-        this.driverId = driverId;
+    public void setImage(String image) {
+        this.image = image;
     }
 }

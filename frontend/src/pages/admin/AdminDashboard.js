@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import ManageCars from './forms/ManageCars';
+import ViewCars from './forms/ViewCars';
 
 
 function AdminDashboard() {
@@ -27,12 +28,7 @@ function AdminDashboard() {
               <li className="nav-item">
                 <Link to="/admin/manage-customers" className="nav-link text-white">Manage Customers</Link>
               </li>
-              {/* <li className="nav-item">
-                <Link to="/admin/forms" className="nav-link text-white">Manage Cars</Link>
-              </li> */}
-              
-
-
+             
 
               {/* Collapsible Manage Cars with Arrow Icon */}
               <li className="nav-item" onClick={handleToggleCollapse}>
@@ -46,7 +42,7 @@ function AdminDashboard() {
               {isCollapseOpen && (
                 <div className="collapse show" id="collapseExample">
                   <li className="nav-item">
-                    <Link to="/admin/viewCar" className="nav-link text-white">All Cars</Link>
+                    <Link to="/admin/forms/viewCar" className="nav-link text-white">All Cars</Link>
                   </li>
                 </div>
               )}
@@ -109,6 +105,7 @@ function AdminDashboard() {
               
               {/* Route for Manage Cars */}
               <Route path="/forms" element={<ManageCars />} />
+              <Route path="/forms/viewCar" element={<ViewCars />} />
             </Routes>
           </div>
         </div>

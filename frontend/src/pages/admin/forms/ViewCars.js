@@ -34,6 +34,34 @@ function ViewCars() {
   };
 
 
+  const handleAvailabilityChange = (carId, currentAvailability) => {
+    const newAvailability = !currentAvailability; // Toggle the availability
+    axios
+      .put(
+        `http://localhost:8080/cars/${carId}/available`,
+        newAvailability,
+        { headers: { "Content-Type": "application/json" } } // Set Content-Type header
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          // Update the car availability in the state
+          setCars(
+            cars.map((car) =>
+              car.id === carId ? { ...car, available: newAvailability } : car
+            )
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating car availability:", error);
+        alert("Failed to update car availability!");
+      });
+  };
+  
+
+
+
+
   // Define table columns
   const columns = [
     {
@@ -58,6 +86,16 @@ function ViewCars() {
         ) : (
           "No Image"
         ),
+    },
+    {
+      name: "Availability",
+      cell: (row) => (
+        <input
+          type="checkbox"
+          checked={row.available}
+          onChange={() => handleAvailabilityChange(row.id, row.available)}
+        />
+      ),
     },
     {
       name: "Actions",

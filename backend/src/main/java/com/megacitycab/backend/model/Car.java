@@ -12,6 +12,7 @@ public class Car {
     private String model;
     private String licensePlate;
     private String image;  // Base64 Image Field
+    private boolean available = true;
 
     public Car() {}
 
@@ -62,5 +63,13 @@ public class Car {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }

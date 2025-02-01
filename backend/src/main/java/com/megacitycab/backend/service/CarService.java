@@ -15,6 +15,7 @@ public class CarService {
     private CarRepository carRepository;
 
     public Car addCar(Car car) {
+        car.setAvailable(true);
         return carRepository.save(car);  // Save the car to the database
     }
 
@@ -24,6 +25,12 @@ public class CarService {
 
     public void deleteCar(String id) {
         carRepository.deleteById(id);  // Delete the car from the repository
+    }
+
+    public Car updateCarAvailability(String id, boolean available) {
+        Car car = carRepository.findById(id).orElseThrow(() -> new RuntimeException("Car not found"));
+        car.setAvailable(available);
+        return carRepository.save(car); // This will return the updated car
     }
 
 }

@@ -10,6 +10,8 @@ function ViewCars() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [filteredCars, setFilteredCars] = useState([]); // Stores filtered results
+  const [searchTerm, setSearchTerm] = useState(""); // Stores search input
 
   const handleView = (car) => {
     setSelectedCar(car);
@@ -32,9 +34,25 @@ function ViewCars() {
       .then((response) => {
         console.log("Fetched Cars:", response.data); // Debug log
         setCars(response.data);
+        setFilteredCars(response.data);
       })
       .catch((error) => console.error("Error fetching cars:", error));
   };
+
+    // Handle search input change
+    const handleSearch = (event) => {
+      const value = event.target.value;
+      setSearchTerm(value);
+
+    // Filter cars based on brand, model, or license plate
+    const filtered = cars.filter(
+      (car) =>
+      car.brand.toLowerCase().includes(value.toLowerCase()) ||
+      car.model.toLowerCase().includes(value.toLowerCase()) ||
+      car.licensePlate.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredCars(filtered);
+    };
 
 
   const handleDelete = (carId) => {
@@ -54,6 +72,30 @@ function ViewCars() {
   };
 
 
+  // const handleAvailabilityChange = (carId, currentAvailability) => {
+  //   const newAvailability = !currentAvailability; // Toggle the availability
+  //   axios
+  //     .put(
+  //       `http://localhost:8080/cars/${carId}/available`,
+  //       newAvailability,
+  //       { headers: { "Content-Type": "application/json" } } // Set Content-Type header
+  //     )
+  //     .then((response) => {
+  //       if (response.status === 200) {
+  //         // Update the car availability in the state
+  //         setCars(
+  //           cars.map((car) =>
+  //             car.id === carId ? { ...car, available: newAvailability } : car
+  //           )
+  //         );
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error updating car availability:", error);
+  //       alert("Failed to update car availability!");
+  //     });
+  // };
+
   const handleAvailabilityChange = (carId, currentAvailability) => {
     const newAvailability = !currentAvailability; // Toggle the availability
     axios
@@ -64,9 +106,14 @@ function ViewCars() {
       )
       .then((response) => {
         if (response.status === 200) {
-          // Update the car availability in the state
+          // Update the car availability in both cars and filteredCars state
           setCars(
             cars.map((car) =>
+              car.id === carId ? { ...car, available: newAvailability } : car
+            )
+          );
+          setFilteredCars(
+            filteredCars.map((car) =>
               car.id === carId ? { ...car, available: newAvailability } : car
             )
           );
@@ -77,6 +124,9 @@ function ViewCars() {
         alert("Failed to update car availability!");
       });
   };
+  
+
+  
 
   const handleEdit = (car) => {
     setSelectedCar(car);
@@ -149,7 +199,15 @@ function ViewCars() {
   return (
     <div className="container mt-4">
       <h2>All Cars</h2>
-      <DataTable columns={columns} data={cars} pagination />
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="Search by brand, model, or license plate..."
+        className="form-control mb-3"
+        value={searchTerm}
+        onChange={handleSearch}
+      />
+      <DataTable columns={columns} data={filteredCars} pagination />
        {/* Update Car Modal */}
        <UpdateCar show={showUpdateModal} handleClose={handleCloseUpdateModal} car={selectedCar} />
         {/* View Car Modal */}

@@ -4,6 +4,8 @@ import CustomerDashboard from './pages/customer/CustomerDashboard';
 import DriverDashboard from './pages/driver/DriverDashboard';
 import LoginPage from './pages/LoginPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 

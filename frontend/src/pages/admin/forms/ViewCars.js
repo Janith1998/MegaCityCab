@@ -2,11 +2,19 @@ import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import UpdateCar from "./models/UpdateCar";
 
 function ViewCars() {
   const [cars, setCars] = useState([]);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedCar, setSelectedCar] = useState(null);
+
 
   useEffect(() => {
+    fetchCars();
+  }, []);
+
+  const fetchCars = () => {
     axios
       .get("http://localhost:8080/cars")
       .then((response) => {
@@ -14,7 +22,7 @@ function ViewCars() {
         setCars(response.data);
       })
       .catch((error) => console.error("Error fetching cars:", error));
-  }, []);
+  };
 
 
   const handleDelete = (carId) => {
@@ -56,6 +64,17 @@ function ViewCars() {
         console.error("Error updating car availability:", error);
         alert("Failed to update car availability!");
       });
+  };
+
+  const handleEdit = (car) => {
+    setSelectedCar(car);
+    setShowUpdateModal(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setShowUpdateModal(false);
+    setSelectedCar(null);
+    fetchCars(); // Refresh car list after update
   };
   
 
@@ -104,7 +123,7 @@ function ViewCars() {
           <button className="btn btn-info btn-sm me-2">
             <FaEye />
           </button>
-          <button className="btn btn-warning btn-sm me-2">
+          <button className="btn btn-warning btn-sm me-2" onClick={() => handleEdit(row)}>
             <FaEdit />
           </button>
           <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row.id)}>
@@ -119,6 +138,8 @@ function ViewCars() {
     <div className="container mt-4">
       <h2>All Cars</h2>
       <DataTable columns={columns} data={cars} pagination />
+       {/* Update Car Modal */}
+       <UpdateCar show={showUpdateModal} handleClose={handleCloseUpdateModal} car={selectedCar} />
     </div>
   );
 }

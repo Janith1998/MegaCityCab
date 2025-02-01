@@ -3,11 +3,23 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import UpdateCar from "./models/UpdateCar";
+import LoadCar from "./models/LoadCar";
 
 function ViewCars() {
   const [cars, setCars] = useState([]);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+
+  const handleView = (car) => {
+    setSelectedCar(car);
+    setShowViewModal(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setShowViewModal(false);
+    setSelectedCar(null);
+  };
 
 
   useEffect(() => {
@@ -120,7 +132,7 @@ function ViewCars() {
       name: "Actions",
       cell: (row) => (
         <div>
-          <button className="btn btn-info btn-sm me-2">
+          <button className="btn btn-info btn-sm me-2" onClick={() => handleView(row)}>
             <FaEye />
           </button>
           <button className="btn btn-warning btn-sm me-2" onClick={() => handleEdit(row)}>
@@ -140,6 +152,8 @@ function ViewCars() {
       <DataTable columns={columns} data={cars} pagination />
        {/* Update Car Modal */}
        <UpdateCar show={showUpdateModal} handleClose={handleCloseUpdateModal} car={selectedCar} />
+        {/* View Car Modal */}
+      <LoadCar show={showViewModal} handleClose={handleCloseViewModal} car={selectedCar} />
     </div>
   );
 }

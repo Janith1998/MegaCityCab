@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import UpdateCar from "./models/UpdateCar";
 import LoadCar from "./models/LoadCar";
+import Message from "../../../components/message/Message";
 
 function ViewCars() {
   const [cars, setCars] = useState([]);
@@ -12,6 +13,8 @@ function ViewCars() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [filteredCars, setFilteredCars] = useState([]); // Stores filtered results
   const [searchTerm, setSearchTerm] = useState(""); // Stores search input
+  const [message, setMessage] = useState(null); // State for message
+  const [messageType, setMessageType] = useState(null); // State for message type
 
   const handleView = (car) => {
     setSelectedCar(car);
@@ -62,39 +65,17 @@ function ViewCars() {
         if (response.status === 200) {
           // Remove the deleted car from the UI
           setCars(cars.filter((car) => car.id !== carId));
-          alert('Car deleted successfully!');
+          setMessage("Car deleted successfully!");
+          setMessageType("success");
         }
       })
       .catch((error) => {
         console.error("Error deleting car:", error);
-        alert('Failed to delete car!');
+        setMessage("Failed to delete car!");
+        setMessageType("error");
       });
   };
 
-
-  // const handleAvailabilityChange = (carId, currentAvailability) => {
-  //   const newAvailability = !currentAvailability; // Toggle the availability
-  //   axios
-  //     .put(
-  //       `http://localhost:8080/cars/${carId}/available`,
-  //       newAvailability,
-  //       { headers: { "Content-Type": "application/json" } } // Set Content-Type header
-  //     )
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         // Update the car availability in the state
-  //         setCars(
-  //           cars.map((car) =>
-  //             car.id === carId ? { ...car, available: newAvailability } : car
-  //           )
-  //         );
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error updating car availability:", error);
-  //       alert("Failed to update car availability!");
-  //     });
-  // };
 
   const handleAvailabilityChange = (carId, currentAvailability) => {
     const newAvailability = !currentAvailability; // Toggle the availability
@@ -207,10 +188,14 @@ function ViewCars() {
         value={searchTerm}
         onChange={handleSearch}
       />
+
+      {/* Message Component */}
+      <Message message={message} type={messageType} onClose={() => setMessage(null)} />
+
       <DataTable columns={columns} data={filteredCars} pagination />
-       {/* Update Car Modal */}
-       <UpdateCar show={showUpdateModal} handleClose={handleCloseUpdateModal} car={selectedCar} />
-        {/* View Car Modal */}
+      {/* Update Car Modal */}
+      <UpdateCar show={showUpdateModal} handleClose={handleCloseUpdateModal} car={selectedCar} />
+      {/* View Car Modal */}
       <LoadCar show={showViewModal} handleClose={handleCloseViewModal} car={selectedCar} />
     </div>
   );

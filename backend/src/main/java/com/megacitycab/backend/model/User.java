@@ -1,58 +1,71 @@
 package com.megacitycab.backend.model;
-
-import java.util.Date;
+import java.io.IOException;
+import java.util.Base64;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.multipart.MultipartFile;
 
 @Document(collection = "users")
 public class User {
-
     @Id
-    private String id;  // MongoDB will auto-generate this
-    private String userId;  // Custom ID for each user (Admin, Driver, Customer) - Change to String
-    private String password;
-    private String role; // Admin, Driver, Customer
+    private String id;
+    private String userId;
     private String name;
-    private String email; // Used for login
+    private String email;
     private String contactNumber;
-    private String contactNumber2; // Optional for both Driver and Customer
-    private String nicNumber;  // Optional for drivers only
-    private String image; // Optional for drivers only
-    private Date createdAt;
-    private Date updatedAt;
+    private String contactNumber2;
+    private String nicNumber;
+    private String role;
+    private String password;
+    private String image; // Store image as Base64 string
+    private String[] nicImages; // Store NIC images as Base64 strings
 
     public User() {}
 
-    // Constructor for Admin, Driver (userId auto-generated, role provided manually)
-    public User(String password, String role, String name, String email, String contactNumber, String contactNumber2, String nicNumber, String image) {
+    // Constructor for "Customer" user (without NIC images)
+    public User(String password, String role, String name, String email, String contactNumber, 
+                String contactNumber2, MultipartFile userImage, MultipartFile[] nicImages) {
         this.password = password;
         this.role = role;
         this.name = name;
         this.email = email;
         this.contactNumber = contactNumber;
         this.contactNumber2 = contactNumber2;
+        
+        // Handle image encoding (if image exists)
+        this.image = userImage != null ? encodeImageToBase64(userImage) : null;
+        this.nicImages = nicImages != null ? encodeNicImagesToBase64(nicImages) : null;
+    }
+
+    // Constructor for "Driver" user (with NIC number)
+    public User(String password, String role, String name, String email, String contactNumber,
+                String contactNumber2, String nicNumber, MultipartFile userImage, MultipartFile[] nicImages) {
+        this(password, role, name, email, contactNumber, contactNumber2, userImage, nicImages);
         this.nicNumber = nicNumber;
-        this.image = image;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
     }
 
-    // Constructor for Customer (with auto-generated userId)
-    public User(String userId, String password, String name, String email, String contactNumber, String contactNumber2) {
-        this.userId = userId;
-        this.password = password;
-        this.role = "Customer";
-        this.name = name;
-        this.email = email;
-        this.contactNumber = contactNumber;
-        this.contactNumber2 = contactNumber2;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+    // Method to convert a MultipartFile image to Base64
+    private String encodeImageToBase64(MultipartFile file) {
+        try {
+            byte[] bytes = file.getBytes();
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    // Getters and Setters
-    public String getId() {
+    // Method to convert multiple NIC images to Base64
+    private String[] encodeNicImagesToBase64(MultipartFile[] files) {
+        String[] encodedImages = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            encodedImages[i] = encodeImageToBase64(files[i]);
+        }
+        return encodedImages;
+    }
+
+        public String getId() {
         return id;
     }
 
@@ -60,28 +73,13 @@ public class User {
         this.id = id;
     }
 
+    // Getters and Setters for all fields
     public String getUserId() {
-        return userId;  // Change to return String
+        return userId;
     }
 
-    public void setUserId(String userId) {  // Change parameter type to String
+    public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getName() {
@@ -124,27 +122,37 @@ public class User {
         this.nicNumber = nicNumber;
     }
 
-    public String getImage() {
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUserImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setUserImage(String image) {
         this.image = image;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public String[] getNicImages() {
+        return nicImages;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setNicImages(String[] nicImages) {
+        this.nicImages = nicImages;
     }
 }
+
+

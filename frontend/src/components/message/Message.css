@@ -1,0 +1,39 @@
+.message {
+    position: fixed;
+    top: 10%;
+    right: 10%;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    z-index: 9999;
+  }
+  
+  .message span {
+    margin-left: 10px;
+  }
+  
+  .message button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .message-success {
+    background-color: #4CAF50;
+  }
+  
+  .message-error {
+    background-color: #f44336;
+  }
+  
+  .message-info {
+    background-color: #2196F3;
+  }
+  

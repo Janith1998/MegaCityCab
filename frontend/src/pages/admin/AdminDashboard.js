@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import ManageCars from './forms/ManageCars';
 import ViewCars from './forms/ViewCars';
+import ManageDriver from './forms/ManageDriver';
 
 
 function AdminDashboard() {
@@ -23,7 +24,7 @@ function AdminDashboard() {
                 <Link to="/admin/dashboard" className="nav-link text-white">Dashboard</Link>
               </li>
               <li className="nav-item">
-                <Link to="/admin/manage-drivers" className="nav-link text-white">Manage Drivers</Link>
+                <Link to="/admin/forms/ManageDriver" className="nav-link text-white">Manage Drivers</Link>
               </li>
               <li className="nav-item">
                 <Link to="/admin/manage-customers" className="nav-link text-white">Manage Customers</Link>
@@ -46,9 +47,6 @@ function AdminDashboard() {
                   </li>
                 </div>
               )}
-
-
-
             
               <li className="nav-item">
                 <Link to="/admin/settings" className="nav-link text-white">Settings</Link>
@@ -106,6 +104,7 @@ function AdminDashboard() {
               {/* Route for Manage Cars */}
               <Route path="/forms" element={<ManageCars />} />
               <Route path="/forms/viewCar" element={<ViewCars />} />
+              <Route path="/forms/ManageDriver" element={<ManageDriver />} />
             </Routes>
           </div>
         </div>

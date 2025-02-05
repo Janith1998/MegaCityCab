@@ -5,6 +5,7 @@ import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { Button } from 'react-bootstrap';
 import AddDriver from './models/AddDriver';
 import ViewDriver from './models/ViewDriver'; 
+import UpdateDriver from './models/UpdateDriver'; 
 
 
 const ManageDriver = () => {
@@ -13,7 +14,10 @@ const ManageDriver = () => {
     const [searchTerm, setSearchTerm] = useState(""); // For search input
     const [selectedDriver, setSelectedDriver] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [showViewModal, setShowViewModal] = useState(false); 
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+ 
 
     useEffect(() => {
         fetchDrivers();
@@ -53,10 +57,6 @@ const ManageDriver = () => {
         }
     };
 
-    const handleUpdate = (userId) => {
-        console.log('Update driver with userId:', userId);
-        // Navigate to update driver page (Implement navigation logic)
-    };
 
     const handleView = (driver) => {
         // console.log('View driver details for userId:', userId);
@@ -65,6 +65,12 @@ const ManageDriver = () => {
 
         // Implement view driver details logic
     };
+
+    const handleUpdate = (driver) => {
+        setSelectedDriver(driver);
+        setShowUpdateModal(true);
+    };
+    
 
     const handleCloseViewModal = () => {
         setShowViewModal(false);
@@ -109,7 +115,7 @@ const ManageDriver = () => {
                     <Button variant="info" onClick={() => handleView(row)}>
                         <FaEye />
                     </Button>{' '}
-                    <Button variant="warning" onClick={() => handleUpdate(row.userId)}>
+                    <Button variant="warning" onClick={() => handleUpdate(row)}>
                         <FaEdit />
                     </Button>{' '}
                     <Button variant="danger" onClick={() => handleDelete(row.id)}>
@@ -156,7 +162,16 @@ const ManageDriver = () => {
                 refreshDrivers={fetchDrivers}
             />
 
-<ViewDriver show={showViewModal} onHide={handleCloseViewModal} driver={selectedDriver} />
+            <ViewDriver 
+            show={showViewModal} 
+            onHide={handleCloseViewModal} 
+            driver={selectedDriver} />
+            <UpdateDriver
+                show={showUpdateModal}
+                handleClose={() => setShowUpdateModal(false)}
+                driver={selectedDriver}
+            />
+
 
         </div>
     );

@@ -1,5 +1,7 @@
 package com.megacitycab.backend.Controller;
 
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +31,16 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    private String encodeFileToBase64(MultipartFile file) {
+        try {
+            byte[] fileBytes = file.getBytes();
+            return Base64.getEncoder().encodeToString(fileBytes);  // Correct method for encoding to base64
+        } catch (Exception e) {
+            throw new RuntimeException("Error encoding file to Base64", e);
+        }
+    }
+    
 
     // Get all users
     @GetMapping
@@ -86,17 +97,45 @@ public class UserController {
         }
     }
 
+
+    
+
     // Update user details
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User updatedUser) {
+    public ResponseEntity<User> updateUser(
+        @PathVariable String id,
+        @RequestParam("name") String name,
+        @RequestParam("email") String email,
+        @RequestParam("contactNumber") String contactNumber,
+        @RequestParam(value = "password", required = false) String password,
+        @RequestParam(value = "userImage", required = false) MultipartFile userImage,
+        @RequestParam(value = "nicImages", required = false) MultipartFile[] nicImages) {
+    
+        // Convert MultipartFile[] to List<String> (Base64 encoded)
+        // Convert MultipartFile[] to List<String> (Base64 encoded)
+
+            List<String> nicImageList = Arrays.stream(nicImages)
+            .map(file -> encodeFileToBase64(file))  // Encoding each MultipartFile to Base64 string
+            .collect(Collectors.toList());
+    
+        // Create a new User object to pass to the service method
+        User updatedUser = new User();
+        updatedUser.setName(name);
+        updatedUser.setEmail(email);
+        updatedUser.setContactNumber(contactNumber);
+        updatedUser.setPassword(password);
+    
+        // Call the updateUser method with the created User object
         try {
-            User user = userService.updateUser(id, updatedUser);
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            User result = userService.updateUser(id, updatedUser, userImage, nicImageList, password);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Error updating user: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Bad Request for validation errors
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+    
+
+
 
     // Add a new driver
     @PostMapping("/drivers")

@@ -1,5 +1,6 @@
 package com.megacitycab.backend.service;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -85,16 +86,8 @@ public class UserService {
         userRepository.deleteById(id); // Delete user by ID
     }
 
-    // Update user details
-    public User updateUser(String id, User updatedUser) {
-        // Check if the user exists, then update
-        return userRepository.findById(id).map(user -> {
-            user.setName(updatedUser.getName());
-            user.setEmail(updatedUser.getEmail());
-            // Update other fields as needed
-            return userRepository.save(user); // Save updated user
-        }).orElseThrow(() -> new RuntimeException("User not found"));
-    }
+
+
 
     // Add a new driver (with image handling)
     public User addDriver(String name, String email, String contactNumber, String contactNumber2,
@@ -141,6 +134,105 @@ public class UserService {
             throw new RuntimeException("Error encoding file to Base64", e);
         }
     }
+
+
+
+
+    
+    // // Update user details
+    // public User updateUser(String id, User updatedUser, MultipartFile userImage, List<String> nicImages, String password) {
+    //     // Check if the user exists, then update
+    //     return userRepository.findById(id).map(user -> {
+    //         // Update user fields
+    //         user.setName(updatedUser.getName());
+    //         user.setEmail(updatedUser.getEmail());
+    
+    //         // Optional: Update contact numbers if provided
+    //         if (updatedUser.getContactNumber() != null) {
+    //             user.setContactNumber(updatedUser.getContactNumber());
+    //         }
+    //         if (updatedUser.getContactNumber2() != null) {
+    //             user.setContactNumber2(updatedUser.getContactNumber2());
+    //         }
+    
+    //         // Optional: Update NIC images if provided
+    //         if (nicImages != null && !nicImages.isEmpty()) {
+    //             user.setNicImages(nicImages.toArray(new String[0]));  // Store list of NIC images
+    //         }
+    
+    //         // Optional: Update user image if provided
+    //         if (userImage != null) {
+    //             user.setUserImage(encodeFileToBase64(userImage)); // Convert image to base64
+    //         }
+    
+    //         // Update password if provided
+    //         if (password != null && !password.isEmpty()) {
+    //             user.setPassword(password);  // Update password field
+    //         }
+    
+    //         // Save and return the updated user
+    //         return userRepository.save(user);
+    //     }).orElseThrow(() -> new RuntimeException("User not found"));
+    // }
+
+
+
+    public User updateUser(String id, User updatedUser, MultipartFile userImage, List<String> nicImages, String password) {
+    // Check if the user exists, then update
+    return userRepository.findById(id).map(user -> {
+        boolean updated = false;  // Flag to track if any update occurred
+
+        // Only update fields if they are different
+        if (updatedUser.getName() != null && !updatedUser.getName().equals(user.getName())) {
+            user.setName(updatedUser.getName());
+            updated = true;
+        }
+
+        if (updatedUser.getEmail() != null && !updatedUser.getEmail().equals(user.getEmail())) {
+            user.setEmail(updatedUser.getEmail());
+            updated = true;
+        }
+
+        // Optional: Update contact numbers if provided and different
+        if (updatedUser.getContactNumber() != null && !updatedUser.getContactNumber().equals(user.getContactNumber())) {
+            user.setContactNumber(updatedUser.getContactNumber());
+            updated = true;
+        }
+        if (updatedUser.getContactNumber2() != null && !updatedUser.getContactNumber2().equals(user.getContactNumber2())) {
+            user.setContactNumber2(updatedUser.getContactNumber2());
+            updated = true;
+        }
+
+        // Optional: Update NIC images if provided and different
+        if (nicImages != null && !nicImages.isEmpty() && !Arrays.equals(nicImages.toArray(new String[0]), user.getNicImages())) {
+            user.setNicImages(nicImages.toArray(new String[0]));  // Store list of NIC images
+            updated = true;
+        }
+
+        // Optional: Update user image if provided and different
+        if (userImage != null && !userImage.isEmpty() && !userImage.getOriginalFilename().equals(user.getUserImage())) {
+            user.setUserImage(encodeFileToBase64(userImage)); // Convert image to base64
+            updated = true;
+        }
+
+        // Update password if provided and different
+        if (password != null && !password.isEmpty() && !password.equals(user.getPassword())) {
+            user.setPassword(password);  // Update password field
+            updated = true;
+        }
+
+        // Only save if any changes were made
+        if (updated) {
+            return userRepository.save(user);
+        } else {
+            return user;  // Return user without saving if no changes were made
+        }
+    }).orElseThrow(() -> new RuntimeException("User not found"));
+}
+
+
+
+
     
 }
 

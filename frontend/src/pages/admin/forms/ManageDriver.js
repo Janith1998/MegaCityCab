@@ -49,7 +49,7 @@ const ManageDriver = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:8080/drivers/${id}`);
+            await axios.delete(`http://localhost:8080/users/${id}`);
             setDrivers(drivers.filter(driver => driver.id !== id));
             setFilteredDrivers(filteredDrivers.filter(driver => driver.id !== id));
         } catch (error) {

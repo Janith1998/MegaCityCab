@@ -82,8 +82,16 @@ public class UserService {
 
     // Delete user by ID
     public void deleteUser(String id) {
-        userRepository.deleteById(id); // Delete user by ID
+        Optional<User> userOptional = userRepository.findById(id);
+        
+        if (userOptional.isPresent()) {
+            userRepository.deleteById(id);
+            System.out.println("User deleted successfully: " + id);
+        } else {
+            throw new RuntimeException("User not found with ID: " + id);
+        }
     }
+    
 
 
 

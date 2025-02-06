@@ -58,20 +58,46 @@ function UpdateDriver({ show, handleClose, driver }) {
   const handleUpdate = async (e) => {
     e.preventDefault();
   
+    if (
+      name === driver.name &&
+      email === driver.email &&
+      contactNumber === driver.contactNumber &&
+      nicNumber === driver.nicNumber &&
+      password === "" && 
+      driverImage === null && 
+      nicImages.length === 0 
+    ) {
+      console.log("No changes detected, not submitting.");
+      return; 
+    }
+    
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
     formData.append("contactNumber", contactNumber);
     formData.append("nicNumber", nicNumber);
+    
     if (password) {
-      formData.append("password", password); // Only send if changed
+      formData.append("password", password); 
     }
+  
+    // Always append existing driver image if no new image is provided
     if (driverImage) {
-      formData.append("userImage", driverImage); // Send the file object
+      formData.append("userImage", driverImage); 
+    } else if (driver.userImage) {
+      formData.append("userImage", driver.userImage); 
     }
-    nicImages.forEach((file) => {
-      formData.append("nicImages", file); // Send all NIC images
-    });
+  
+    // Always append existing NIC images if no new NIC images are provided
+    if (nicImages.length > 0) {
+      nicImages.forEach((file) => {
+        formData.append("nicImages", file);   
+      });
+    } else if (driver.nicImages && driver.nicImages.length > 0) {
+      driver.nicImages.forEach((img) => {
+        formData.append("nicImages", img);
+      });
+    }
   
     // Log the form data before sending it
     console.log("Sending data to backend:");
@@ -82,7 +108,7 @@ function UpdateDriver({ show, handleClose, driver }) {
     console.log("Password: ", password ? "Provided" : "Not provided");
     console.log("Driver Image: ", driverImage ? "Provided" : "Not provided");
     console.log("NIC Images: ", nicImages.length ? `${nicImages.length} images` : "No NIC images");
-  
+    
     try {
       await axios.put(`http://localhost:8080/users/${driver.id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -92,6 +118,7 @@ function UpdateDriver({ show, handleClose, driver }) {
       console.error("Error updating driver:", error);
     }
   };
+  
   
 
   return (

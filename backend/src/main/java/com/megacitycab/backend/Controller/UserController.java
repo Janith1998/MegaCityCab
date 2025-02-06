@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,9 +97,66 @@ public class UserController {
     }
 
 
+
+
+    // // Update user details
+    // @PutMapping("/{id}")
+    // public ResponseEntity<User> updateUser(
+    //     @PathVariable String id,
+    //     @RequestParam("name") String name,
+    //     @RequestParam("email") String email,
+    //     @RequestParam("contactNumber") String contactNumber,
+    //     @RequestParam(value = "password", required = false) String password,
+    //     @RequestParam(value = "userImage", required = false) MultipartFile userImage,
+    //     @RequestParam(value = "nicImages", required = false) MultipartFile[] nicImages) {
+    
+       
+    //     // Convert MultipartFile[] to List<String> (Base64 encoded)
+
+    //         List<String> nicImageList = Arrays.stream(nicImages)
+    //         .filter(file -> file != null && !file.isEmpty())
+    //         .map(file -> encodeFileToBase64(file))  // Encoding each MultipartFile to Base64 string
+    //         .collect(Collectors.toList());
+    
+    //     // Create a new User object to pass to the service method
+    //     User updatedUser = new User();
+    //     updatedUser.setName(name);
+    //     updatedUser.setEmail(email);
+    //     updatedUser.setContactNumber(contactNumber);
+    //     updatedUser.setPassword(password);
+    
+    //     // Call the updateUser method with the created User object
+    //     try {
+    //         User result = userService.updateUser(id, updatedUser, userImage, nicImageList, password);
+    //         return new ResponseEntity<>(result, HttpStatus.OK);
+    //     } catch (Exception e) {
+    //         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    //     }
+    // }
     
 
-    // Update user details
+
+
+    // // Add a new driver
+    // @PostMapping("/drivers")
+    // public ResponseEntity<User> addDriver(@RequestParam("name") String name,
+    //                                       @RequestParam("email") String email,
+    //                                       @RequestParam("contactNumber") String contactNumber,
+    //                                       @RequestParam(value = "contactNumber2", required = false) String contactNumber2,
+    //                                       @RequestParam("nicNumber") String nicNumber,
+    //                                       @RequestParam(value = "userImage", required = false) MultipartFile userImage,
+    //                                       @RequestParam(value = "nicImages", required = false) MultipartFile[] nicImages,
+    //                                       @RequestParam("password") String password) {
+    //     try {
+    //         User driver = userService.addDriver(name, email, contactNumber, contactNumber2, nicNumber, userImage, nicImages, password);
+    //         return new ResponseEntity<>(driver, HttpStatus.CREATED);
+    //     } catch (Exception e) {
+    //         logger.error("Error adding driver: {}", e.getMessage());
+    //         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    //     }
+    // }
+    
+
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(
         @PathVariable String id,
@@ -111,49 +167,39 @@ public class UserController {
         @RequestParam(value = "userImage", required = false) MultipartFile userImage,
         @RequestParam(value = "nicImages", required = false) MultipartFile[] nicImages) {
     
-        // Convert MultipartFile[] to List<String> (Base64 encoded)
-        // Convert MultipartFile[] to List<String> (Base64 encoded)
-
-            List<String> nicImageList = Arrays.stream(nicImages)
-            .map(file -> encodeFileToBase64(file))  // Encoding each MultipartFile to Base64 string
-            .collect(Collectors.toList());
-    
-        // Create a new User object to pass to the service method
-        User updatedUser = new User();
-        updatedUser.setName(name);
-        updatedUser.setEmail(email);
-        updatedUser.setContactNumber(contactNumber);
-        updatedUser.setPassword(password);
-    
-        // Call the updateUser method with the created User object
         try {
+            // Fetch the existing user details
+            User existingUser = userService.getUserById(id);
+            if (existingUser == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+    
+            // Convert nicImages to List<String> if provided, otherwise keep the existing images
+            List<String> nicImageList = (nicImages != null && nicImages.length > 0) 
+                ? Arrays.stream(nicImages)
+                        .filter(file -> file != null && !file.isEmpty())
+                        .map(this::encodeFileToBase64)
+                        .collect(Collectors.toList()) 
+                        : Arrays.asList(existingUser.getNicImages());
+    
+            // Create a new User object with updated details
+            User updatedUser = new User();
+            updatedUser.setName(name);
+            updatedUser.setEmail(email);
+            updatedUser.setContactNumber(contactNumber);
+            updatedUser.setPassword(password);
+    
+            // Update user in the service
             User result = userService.updateUser(id, updatedUser, userImage, nicImageList, password);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            logger.error("Error updating user: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
 
 
 
-    // Add a new driver
-    @PostMapping("/drivers")
-    public ResponseEntity<User> addDriver(@RequestParam("name") String name,
-                                          @RequestParam("email") String email,
-                                          @RequestParam("contactNumber") String contactNumber,
-                                          @RequestParam(value = "contactNumber2", required = false) String contactNumber2,
-                                          @RequestParam("nicNumber") String nicNumber,
-                                          @RequestParam(value = "userImage", required = false) MultipartFile userImage,
-                                          @RequestParam(value = "nicImages", required = false) MultipartFile[] nicImages,
-                                          @RequestParam("password") String password) {
-        try {
-            User driver = userService.addDriver(name, email, contactNumber, contactNumber2, nicNumber, userImage, nicImages, password);
-            return new ResponseEntity<>(driver, HttpStatus.CREATED);
-        } catch (Exception e) {
-            logger.error("Error adding driver: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-    
+
 }

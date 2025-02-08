@@ -29,7 +29,7 @@ const ViewDriver = ({ show, onHide, driver }) => {
         <p><strong>Contact Number 2:</strong> {driver.contactNumber2 || 'N/A'}</p>
         <p><strong>Assigned Car :</strong> {driver.assignedCarLicensePlate}</p>
 
-        <h5 className="mt-3">NIC Images</h5>
+        <h5 className="mt-3">License Images</h5>
     <div className="d-flex justify-content-center">
         {driver.nicImages && driver.nicImages.length > 0 ? (
         driver.nicImages.map((nicImage, index) => (

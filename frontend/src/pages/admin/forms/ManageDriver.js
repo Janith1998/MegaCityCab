@@ -158,35 +158,30 @@ const ManageDriver = () => {
         },
         {
             name: 'Assigned Car',
-            cell: (row) => (
-                <Select
-                    options={cars.map((car) => ({
-                        value: car.licensePlate,  
-                        label: `${car.licensePlate} - ${car.brand} - ${car.model}`  
-                    }))}
-                    defaultValue={row.assignedCar ? {
-                        value: row.assignedCar.licensePlate,  
-                        label: `${row.assignedCar.licensePlate} - ${row.assignedCar.brand} ${row.assignedCar.model}`
-                    } : null}
-                    onChange={(selectedOption) => {
-                        console.log('Selected option:', selectedOption);  
-                        if (selectedOption) {
-                            const selectedCar = cars.find(car => car.licensePlate === selectedOption.value);
-                            if (selectedCar) {
-                                console.log('License Plate:', selectedCar.licensePlate);  
-                            }   
+            cell: (row) => {
+                return (
+                    <Select
+                        options={cars.map((car) => ({
+                            value: car.licensePlate,
+                            label: `${car.licensePlate} - ${car.brand} - ${car.model}`,
+                        }))}
+                        value={
+                            row.assignedCarLicensePlate
+                                ? {
+                                      value: row.assignedCarLicensePlate,
+                                      label: `${row.assignedCarLicensePlate}`,
+                                  }
+                                : null
                         }
-                        handleCarAssignment(row, selectedOption);  
-                    }}
-                    placeholder={row.assignedCar ? `${row.assignedCar.licensePlate} - ${row.assignedCar.brand} ${row.assignedCar.model}` : "Select a Vehicle"}
-                    isClearable
-                />
-
-            
-
-            ),
+                        onChange={(selectedOption) => handleCarAssignment(row, selectedOption)}
+                        placeholder="Select a Vehicle"
+                        isClearable
+                    />
+                );
+            },
             width: '190px',
         },
+        
         
         
         {

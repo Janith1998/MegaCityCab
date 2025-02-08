@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { FaCheckCircle, FaExclamationCircle, FaTimesCircle } from "react-icons/fa";
 import './Message.css'; // Import styles
 

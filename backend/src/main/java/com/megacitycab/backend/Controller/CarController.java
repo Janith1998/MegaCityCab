@@ -33,6 +33,12 @@ public class CarController {
     public List<Car> getAllCars() {
         return carService.getAllCars();
     }
+    
+    // Fetch only available cars
+    @GetMapping("/available")
+    public List<Car> getAvailableCars() {
+    return carService.getAvailableCars(); 
+}
 
     @DeleteMapping("/{id}")
     public void deleteCar(@PathVariable String id) {

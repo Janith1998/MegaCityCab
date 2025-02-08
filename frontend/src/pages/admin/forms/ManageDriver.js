@@ -3,6 +3,8 @@ import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { Button } from 'react-bootstrap';
+import Select from 'react-select';
+
 import AddDriver from './models/AddDriver';
 import ViewDriver from './models/ViewDriver'; 
 import UpdateDriver from './models/UpdateDriver'; 
@@ -16,11 +18,13 @@ const ManageDriver = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [cars, setCars] = useState([]);
 
  
 
     useEffect(() => {
         fetchDrivers();
+        fetchCars();
     }, []);
 
     const fetchDrivers = async () => {
@@ -31,6 +35,15 @@ const ManageDriver = () => {
       } catch (error) {
           console.error('Error fetching drivers:', error);
       }
+    };
+
+    const fetchCars = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/cars/available'); // Assuming this is your endpoint for cars
+            setCars(response.data); // Store the available cars
+        } catch (error) {
+            console.error('Error fetching cars:', error);
+        }
     };
 
     const handleSearch = (event) => {
@@ -59,11 +72,11 @@ const ManageDriver = () => {
 
 
     const handleView = (driver) => {
-        // console.log('View driver details for userId:', userId);
+      
         setSelectedDriver(driver);
         setShowViewModal(true);
 
-        // Implement view driver details logic
+        
     };
 
     const handleUpdate = (driver) => {
@@ -77,6 +90,36 @@ const ManageDriver = () => {
         setSelectedDriver(null);
       };
 
+
+
+
+      const handleCarAssignment = async (driver, selectedOption) => {
+        if (!selectedOption) {
+            alert("No car selected.");
+            return;
+        }
+    
+        try {
+            const requestBody = {
+                driverId: driver.userId,
+                assignedCarLicensePlate: selectedOption.value,
+            };
+    
+            console.log("Sending request:", requestBody);
+    
+            await axios.put(`http://localhost:8080/users/assignCarToDriver/${driver.userId}`, requestBody);
+
+    
+            alert("Car assigned successfully!");
+            fetchDrivers(); // Refresh the drivers list after assignment
+        } catch (error) {
+            console.error("Error assigning car:", error.response?.data || error.message);
+            alert("Failed to assign car.");
+        }
+    };
+    
+    
+
     // Define columns for the DataTable
     const columns = [
         {
@@ -88,26 +131,64 @@ const ManageDriver = () => {
                 ) : (
                     "No Image"
                 ),
+                width: '90px',
         },
         
         {
             name: 'Name',
             cell: (row) => row.name,
             sortable: true,
+            width: '120px',
         },
         {
             name: 'Email',
             cell: (row) => row.email,
             sortable: true,
+            width: '150px',
         },
         {
             name: 'NIC',
             cell: (row) => row.nicNumber,
+            width: '110px',
         },
         {
             name: 'Contact Number',
             cell: (row) => row.contactNumber,
+            width: '130px',
         },
+        {
+            name: 'Assigned Car',
+            cell: (row) => (
+                <Select
+                    options={cars.map((car) => ({
+                        value: car.licensePlate,  
+                        label: `${car.licensePlate} - ${car.brand} - ${car.model}`  
+                    }))}
+                    defaultValue={row.assignedCar ? {
+                        value: row.assignedCar.licensePlate,  
+                        label: `${row.assignedCar.licensePlate} - ${row.assignedCar.brand} ${row.assignedCar.model}`
+                    } : null}
+                    onChange={(selectedOption) => {
+                        console.log('Selected option:', selectedOption);  
+                        if (selectedOption) {
+                            const selectedCar = cars.find(car => car.licensePlate === selectedOption.value);
+                            if (selectedCar) {
+                                console.log('License Plate:', selectedCar.licensePlate);  
+                            }   
+                        }
+                        handleCarAssignment(row, selectedOption);  
+                    }}
+                    placeholder={row.assignedCar ? `${row.assignedCar.licensePlate} - ${row.assignedCar.brand} ${row.assignedCar.model}` : "Select a Vehicle"}
+                    isClearable
+                />
+
+            
+
+            ),
+            width: '190px',
+        },
+        
+        
         {
             name: 'Actions',
             cell: (row) => (
@@ -123,6 +204,7 @@ const ManageDriver = () => {
                     </Button>
                 </div>
             ),
+            // width: '130px',
         },
     ];
 

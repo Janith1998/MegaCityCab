@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.megacitycab.backend.model.User;
+import com.megacitycab.backend.repository.CarRepository;
 import com.megacitycab.backend.repository.UserRepository;
 
 @Service
@@ -17,6 +18,10 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CarRepository carRepository;
+
 
     @Autowired
     private SequenceGeneratorService sequenceGeneratorService;
@@ -209,6 +214,29 @@ public class UserService {
     }
     
     
+
+
+
+    public String assignCarToDriver(String userId, String licensePlate) {
+        System.out.println("Assigning car to driver: " + userId + " with license plate: " + licensePlate);
+    
+        User driver = userRepository.findByUserId(userId);
+    
+        if (driver != null && "Driver".equals(driver.getRole())) {
+            if (licensePlate == null) {
+                driver.setAssignedCarLicensePlate(null); // Unassign car
+            } else {
+                driver.setAssignedCarLicensePlate(licensePlate); // Assign car
+            }
+            userRepository.save(driver);
+            return "Car assigned successfully!";
+        } else {
+            System.out.println("Driver not found or invalid role.");
+            return "Driver not found or invalid role!";
+        }
+    }
+    
+
 
 
 

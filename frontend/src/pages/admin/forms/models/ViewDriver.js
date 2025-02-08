@@ -27,6 +27,7 @@ const ViewDriver = ({ show, onHide, driver }) => {
         <p><strong>NIC:</strong> {driver.nicNumber}</p>
         <p><strong>Contact Number:</strong> {driver.contactNumber}</p>
         <p><strong>Contact Number 2:</strong> {driver.contactNumber2 || 'N/A'}</p>
+        <p><strong>Assigned Car :</strong> {driver.assignedCarLicensePlate}</p>
 
         <h5 className="mt-3">NIC Images</h5>
     <div className="d-flex justify-content-center">

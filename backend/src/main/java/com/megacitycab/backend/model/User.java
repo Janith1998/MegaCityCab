@@ -18,8 +18,9 @@ public class User {
     private String nicNumber;
     private String role;
     private String password;
-    private String image; // Store image as Base64 string
-    private String[] nicImages; // Store NIC images as Base64 strings
+    private String image; 
+    private String[] nicImages;
+    private String assignedCarLicensePlate;
 
     public User() {}
 
@@ -55,6 +56,8 @@ public class User {
             return null;
         }
     }
+
+    
 
     // Method to convert multiple NIC images to Base64
     private String[] encodeNicImagesToBase64(MultipartFile[] files) {
@@ -152,6 +155,14 @@ public class User {
 
     public void setNicImages(String[] nicImages) {
         this.nicImages = nicImages;
+    }
+
+    public String getAssignedCarLicensePlate() {
+        return assignedCarLicensePlate;
+    }
+
+    public void setAssignedCarLicensePlate(String assignedCarLicensePlate) {
+        this.assignedCarLicensePlate = assignedCarLicensePlate;
     }
 }
 

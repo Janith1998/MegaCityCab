@@ -9,6 +9,7 @@ import com.megacitycab.backend.model.User;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
-    Optional<User> findByEmail(String email); // Change to return Optional<User>
-    boolean existsByEmail(String email); // Check if email exists
+    Optional<User> findByEmail(String email); 
+    boolean existsByEmail(String email); 
+    User findByUserId(String userId);
 }

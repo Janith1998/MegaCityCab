@@ -42,6 +42,9 @@ public class CarService {
         return carRepository.save(car);
     }
     
+    public List<Car> getAvailableCars() {
+        return carRepository.findByAvailableTrue(); 
+    }
 
 }
 

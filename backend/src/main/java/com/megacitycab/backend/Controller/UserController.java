@@ -113,6 +113,9 @@ public class UserController {
     }
     
 
+
+
+
     // Add a new driver
     @PostMapping("/drivers")
     public ResponseEntity<User> addDriver(@RequestParam("name") String name,
@@ -133,7 +136,23 @@ public class UserController {
     }
     
 
-    
+  
+    // Add a new customer
+@PostMapping("/customers")
+public ResponseEntity<User> addCustomer(@RequestParam("name") String name,
+                                        @RequestParam("email") String email,
+                                        @RequestParam("contactNumber") String contactNumber,
+                                        @RequestParam(value = "nicNumber", required = false) String nicNumber,
+                                        @RequestParam("password") String password) {
+    try {
+        User customer = userService.addCustomer(name, email, contactNumber,nicNumber, password);
+        return new ResponseEntity<>(customer, HttpStatus.CREATED);
+    } catch (Exception e) {
+        logger.error("Error adding customer: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+}
+
 
   
 
@@ -229,7 +248,6 @@ public class UserController {
         return new ResponseEntity<>("An error occurred while assigning the car", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-
 
 
   

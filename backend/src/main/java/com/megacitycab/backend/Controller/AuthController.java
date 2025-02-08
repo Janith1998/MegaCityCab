@@ -40,7 +40,7 @@ public class AuthController {
         return new Response("Invalid email or password", null);
     }
 
-    // Register endpoint (save user to DB)
+    // Register driver endpoint (save user to DB)
 
     @PostMapping("/register")
     public String register(@RequestParam String email, 

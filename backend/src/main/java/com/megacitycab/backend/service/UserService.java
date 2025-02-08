@@ -110,31 +110,53 @@ public class UserService {
             driver.setContactNumber(contactNumber);
             driver.setContactNumber2(contactNumber2);
             driver.setNicNumber(nicNumber);
-            driver.setRole("Driver");  // Ensure role is set to "Driver"
-            driver.setPassword(password);  // Save the password field
+            driver.setRole("Driver");  
+            driver.setPassword(password);  
 
-            // Generate user ID based on the role
+           
             String role = driver.getRole();
-            String generatedId = generateUserId(role);  // This will call the generateUserId method
-            driver.setUserId(generatedId);  // Set the generated user ID
+            String generatedId = generateUserId(role);  
+            driver.setUserId(generatedId);  
 
-            // Handle user image (if present)
+           
             if (userImage != null) {
-            driver.setUserImage(encodeFileToBase64(userImage)); // Convert image to base64
+            driver.setUserImage(encodeFileToBase64(userImage)); 
             }
 
-            // Handle NIC images (if present)
+   
             if (nicImages != null && nicImages.length > 0) {
-            // Convert NIC images to base64 (you can adapt how you handle these images based on your requirements)
+           
             String[] nicImageBase64 = new String[nicImages.length];
             for (int i = 0; i < nicImages.length; i++) {
             nicImageBase64[i] = encodeFileToBase64(nicImages[i]);
             }
-            driver.setNicImages(nicImageBase64); // Set the NIC images
+            driver.setNicImages(nicImageBase64); 
             }
 
-            return userRepository.save(driver);  // Save the driver with generated userId
+            return userRepository.save(driver); 
             }
+
+
+        // Add a new customer 
+        public User addCustomer(String name, String email, String contactNumber,String nicNumber, String password) {
+            User customer = new User();
+            customer.setName(name);
+            customer.setEmail(email);
+            customer.setContactNumber(contactNumber);
+            customer.setNicNumber(nicNumber);
+            customer.setRole("Customer");  
+            customer.setPassword(password);  
+        
+            String role = customer.getRole();
+            String generatedId = generateUserId(role);  
+            customer.setUserId(generatedId);  
+
+
+            return userRepository.save(customer);  
+        }
+
+
+
 
 
     // Helper method to convert a MultipartFile to base64 string
@@ -217,25 +239,25 @@ public class UserService {
 
 
 
-    public String assignCarToDriver(String userId, String licensePlate) {
-        System.out.println("Assigning car to driver: " + userId + " with license plate: " + licensePlate);
-    
-        User driver = userRepository.findByUserId(userId);
-    
-        if (driver != null && "Driver".equals(driver.getRole())) {
-            if (licensePlate == null) {
-                driver.setAssignedCarLicensePlate(null); // Unassign car
-            } else {
-                driver.setAssignedCarLicensePlate(licensePlate); // Assign car
-            }
-            userRepository.save(driver);
-            return "Car assigned successfully!";
+    // Method to assign or unassign a car to a driver by userId
+public String assignCarToDriver(String userId, String licensePlate) {
+    // Find the driver by userId
+    User driver = userRepository.findByUserId(userId);
+
+    if (driver != null && "Driver".equals(driver.getRole())) {
+        // If licensePlate is null, unassign the car
+        if (licensePlate == null) {
+            driver.setAssignedCarLicensePlate(null); // Unassign the car
         } else {
-            System.out.println("Driver not found or invalid role.");
-            return "Driver not found or invalid role!";
+            driver.setAssignedCarLicensePlate(licensePlate); // Assign the car
         }
+        userRepository.save(driver); // Save the updated driver
+
+        return "Car assigned successfully!";
+    } else {
+        return "Driver not found or invalid role!";
     }
-    
+}
 
 
 

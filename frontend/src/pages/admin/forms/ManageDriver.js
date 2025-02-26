@@ -131,30 +131,30 @@ const ManageDriver = () => {
                 ) : (
                     "No Image"
                 ),
-                width: '90px',
+                width: '100px',
         },
         
         {
             name: 'Name',
             cell: (row) => row.name,
             sortable: true,
-            width: '120px',
+            //width: '120px',
         },
         {
             name: 'Email',
             cell: (row) => row.email,
             sortable: true,
-            width: '150px',
+            //width: '150px',
         },
         {
             name: 'NIC',
             cell: (row) => row.nicNumber,
-            width: '110px',
+            //width: '110px',
         },
         {
             name: 'Contact Number',
             cell: (row) => row.contactNumber,
-            width: '130px',
+           // width: '130px',
         },
         {
             name: 'Assigned Car',
@@ -179,7 +179,7 @@ const ManageDriver = () => {
                     />
                 );
             },
-            width: '190px',
+           // width: '190px',
         },
         
         

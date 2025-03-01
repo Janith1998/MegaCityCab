@@ -4,11 +4,16 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { debounce } from 'lodash';
+import L from 'leaflet';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-import MapComponent from '../../src/MapComponent';
+
+//import MapComponent from '../../src/MapComponent';
 import '../pages/Home.css';
 import slide1 from '../assets/slide1.jpg';
 import slide2 from '../assets/slide2.jpg';
+import redMarker from '../assets/red-marker.png';
 
 function Home() {
   const navigate = useNavigate();
@@ -20,6 +25,18 @@ function Home() {
   const [dropoffSuggestions, setDropoffSuggestions] = useState([]);
 
   const provider = new OpenStreetMapProvider();
+
+
+  const customIcon = new L.Icon({
+    iconUrl: redMarker,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41], // Default Leaflet icon size
+    iconAnchor: [12, 41], // Adjust position of icon
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+  
+
 
   const handleLocationChange = useCallback(
     debounce(async (e, isPickup) => {
@@ -181,10 +198,16 @@ function Home() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              <Marker position={pickupCoords}>
+              {/* <Marker position={pickupCoords}>
                 <Popup>Pickup Location</Popup>
               </Marker>
               <Marker position={dropoffCoords}>
+                <Popup>Dropoff Location</Popup>
+              </Marker> */}
+              <Marker position={pickupCoords} icon={customIcon}>
+                <Popup>Pickup Location</Popup>
+              </Marker>
+              <Marker position={dropoffCoords} icon={customIcon}>
                 <Popup>Dropoff Location</Popup>
               </Marker>
               <MapUpdater coords={pickupCoords} />

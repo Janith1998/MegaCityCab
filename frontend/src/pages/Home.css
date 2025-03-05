@@ -43,3 +43,6 @@
     padding: 20px;
   }
   
+  .leaflet-routing-container {
+    display: none;
+}

@@ -1,0 +1,53 @@
+.booking-form {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .booking-form-header {
+    display: flex; /* Use flexbox to align items horizontally */
+    align-items: center; /* Vertically center the items */
+    justify-content: space-between; /* Space between text and image */
+    margin-bottom: 20px; /* Add some spacing below the header */
+  }
+  
+  .car-image {
+    width: 150px; /* Adjust the width of the car image */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px;
+  }
+  
+  .car-brand {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .price-display {
+    font-size: 18px;
+    font-weight: 600;
+    color: #007bff;
+    margin-top: 10px;
+  }
+
+  .pick-a-cab-button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .pick-a-cab-button:hover {
+    background: #0056b3;
+  }
+  
+  .btn-primary:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+  }

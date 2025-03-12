@@ -6,9 +6,12 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { debounce } from 'lodash';
 import L from 'leaflet';
 import 'leaflet-routing-machine';
+import { useNavigate } from 'react-router-dom';
 
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import redMarker from '../../assets/red-marker.png';
+
+import './BookRide.css';
 
 function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
   const map = useMap();
@@ -89,7 +92,7 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
   );
 }
 
-function BookRide() {
+function BookRide({ car }) {
   const [pickupLocation, setPickupLocation] = useState('');
   const [dropoffLocation, setDropoffLocation] = useState('');
   const [pickupCoords, setPickupCoords] = useState(null);
@@ -103,6 +106,7 @@ function BookRide() {
   const [dropoffLon, setDropoffLon] = useState('');
   const [price, setPrice] = useState(null);
   const [asap, setAsap] = useState(false);
+  const navigate = useNavigate();
 
   const provider = new OpenStreetMapProvider();
 
@@ -207,13 +211,42 @@ function BookRide() {
     }
   };
 
+  const MapUpdater = ({ coords }) => {
+    const map = useMap();
+
+    useEffect(() => {
+      if (map && coords) {
+        map.setView(coords, map.getZoom());
+      }
+    }, [coords, map]);
+
+    return null;
+  };
+
   return (
+       
     <div className="book-ride-container">
       {/* Booking Form */}
       <div className="booking-form">
+      <div className="booking-form-header">
         <h3>Book a Ride</h3>
+        {car ? (        
+        <img
+              src={`data:image/jpeg;base64,${car.image}`}
+              alt={car.brand}
+              className="car-image" 
+              />
+        ) : (
+          <button
+              className="pick-a-cab-button"
+              onClick={() => navigate('/')} // Navigate to Home.js
+            >
+              Pick A Cab
+            </button>
+
+            )}
+    </div>
         <form>
-          {/* Pickup Location Input */}
           <div className="mb-3">
             <label className="form-label">Pickup Location</label>
             <input
@@ -340,7 +373,9 @@ function BookRide() {
             <Form.Control as="textarea" rows={3} placeholder="Any special requests..." />
           </Form.Group>
 
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary"
+          disabled={!car}
+          >
             Book Ride
           </button>
         </form>
@@ -358,6 +393,7 @@ function BookRide() {
               dropoffCoords={dropoffCoords}
               setRouteDetails={setRouteDetails}
             />
+            <MapUpdater coords={pickupCoords} />
           </MapContainer>
         )}
       </div>

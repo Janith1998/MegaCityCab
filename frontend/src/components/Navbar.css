@@ -6,9 +6,6 @@
     height: 70px; /* Fixed height for the navbar */
     display: flex;
     align-items: center; /* Vertically center items */
-    position: sticky; 
-    top: 0;
-    transition: all 0.3s ease;
   }
   
   .mcc-navbar-container {

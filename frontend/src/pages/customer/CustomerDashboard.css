@@ -76,132 +76,132 @@
 
   /* BookRide Container */
 .book-ride-container {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Booking Form */
+.booking-form {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.booking-form h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #343a40;
+}
+
+.booking-form .form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.booking-form .form-control {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 10px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.booking-form .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.booking-form .list-group {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+}
+
+.booking-form .list-group-item {
+  cursor: pointer;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.3s ease;
+}
+
+.booking-form .list-group-item:hover {
+  background-color: #f8f9fa;
+}
+
+.booking-form .btn-primary {
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.booking-form .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.booking-form .btn-primary:active {
+  background-color: #004080;
+}
+
+/* Price Display */
+.price-display {
+  font-size: 18px;
+  font-weight: 600;
+  color: #28a745;
+  margin-top: 15px;
+}
+
+/* Map Section */
+.map-section {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* Route Info */
+.route-info {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  color: #343a40;
+}
+
+.route-info strong {
+  color: #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .book-ride-container {
+    flex-direction: column;
   }
-  
-  /* Booking Form */
+
   .booking-form {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 24px;
-    width: 100%;
-    max-width: 500px;
+    max-width: 100%;
   }
-  
-  .booking-form h3 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #343a40;
-  }
-  
-  .booking-form .form-label {
-    font-weight: 500;
-    color: #495057;
-  }
-  
-  .booking-form .form-control {
-    border-radius: 8px;
-    border: 1px solid #ced4da;
-    padding: 10px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-  }
-  
-  .booking-form .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-  }
-  
-  .booking-form .list-group {
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-top: 5px;
-  }
-  
-  .booking-form .list-group-item {
-    cursor: pointer;
-    padding: 10px;
-    border: none;
-    border-bottom: 1px solid #e9ecef;
-    transition: background-color 0.3s ease;
-  }
-  
-  .booking-form .list-group-item:hover {
-    background-color: #f8f9fa;
-  }
-  
-  .booking-form .btn-primary {
-    background-color: #007bff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-  }
-  
-  .booking-form .btn-primary:hover {
-    background-color: #0056b3;
-  }
-  
-  .booking-form .btn-primary:active {
-    background-color: #004080;
-  }
-  
-  /* Price Display */
-  .price-display {
-    font-size: 18px;
-    font-weight: 600;
-    color: #28a745;
-    margin-top: 15px;
-  }
-  
-  /* Map Section */
+
   .map-section {
-    flex: 1;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: 400px;
   }
-  
-  .leaflet-container {
-    height: 100%;
-    width: 100%;
-    border-radius: 12px;
-  }
-  
-  /* Route Info */
-  .route-info {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-    color: #343a40;
-  }
-  
-  .route-info strong {
-    color: #007bff;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .book-ride-container {
-      flex-direction: column;
-    }
-  
-    .booking-form {
-      max-width: 100%;
-    }
-  
-    .map-section {
-      height: 400px;
-    }
-  }
+}

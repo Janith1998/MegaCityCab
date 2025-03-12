@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import BookRide from './BookRide'; // Import the BookRide component
 import '../customer/CustomerDashboard.css';
 
 function CustomerDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { car } = location.state || {}; // Retrieve car data from navigation state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showBookRide, setShowBookRide] = useState(false); // State to control BookRide visibility
+  const [showBookRide, setShowBookRide] = useState(!!car); // Automatically show BookRide if car data is present
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -94,8 +96,8 @@ function CustomerDashboard() {
 
             {/* Conditional Rendering */}
             {showBookRide ? (
-              // Show BookRide component
-              <BookRide />
+              // Show BookRide component with car data
+              <BookRide car={car} />
             ) : (
               // Show Default Dashboard Content
               <>

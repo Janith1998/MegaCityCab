@@ -33,11 +33,11 @@ public class AuthController {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.getPassword().equals(password)) {
-                return new Response("Login successful!", user.getRole());
+                return new Response("Login successful!", user.getRole(), user.getName());
             }
         }
 
-        return new Response("Invalid email or password", null);
+        return new Response("Invalid email or password", null,null);
     }
 
     // Register driver endpoint (save user to DB)
@@ -84,10 +84,12 @@ public class AuthController {
     public static class Response {
         private String message;
         private String role;
+        private String name;
 
-        public Response(String message, String role) {
+        public Response(String message, String role , String name) {
             this.message = message;
             this.role = role;
+            this.name = name;
         }
 
         public String getMessage() {
@@ -104,6 +106,13 @@ public class AuthController {
 
         public void setRole(String role) {
             this.role = role;
+        }
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
     }
 }

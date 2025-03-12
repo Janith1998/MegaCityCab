@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import ManageCars from './forms/ManageCars';
 import ViewCars from './forms/ViewCars';
 import ManageDriver from './forms/ManageDriver';
@@ -7,9 +7,18 @@ import ManageDriver from './forms/ManageDriver';
 
 function AdminDashboard() {
   const [isCollapseOpen, setIsCollapseOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleToggleCollapse = () => {
     setIsCollapseOpen(!isCollapseOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    navigate('/');
   };
 
   return (
@@ -50,6 +59,9 @@ function AdminDashboard() {
             
               <li className="nav-item">
                 <Link to="/admin/settings" className="nav-link text-white">Settings</Link>
+              </li>
+              <li className="nav-item">
+              <Link to="/" className="nav-link text-white" onClick={handleLogout} style={{ cursor: 'pointer' }}>Logout</Link>
               </li>
             </ul>
           </div>

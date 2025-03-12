@@ -1,0 +1,209 @@
+/* Navbar Container */
+.mcc-navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgb(255, 255, 255);
+    padding: 10px 20px;
+    height: 70px; /* Fixed height for the navbar */
+    display: flex;
+    align-items: center; /* Vertically center items */
+    position: sticky; 
+    top: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .mcc-navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Vertically center items */
+    max-width: 1800px;
+    width: 100%; /* Ensure it takes full width */
+    padding-left: 50px;
+
+  }
+  
+  /* Brand Logo and Name */
+  .mcc-navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-left: 0;
+    height: 100%; /* Ensure it doesn't stretch the navbar */
+  }
+  
+  .mcc-logo {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    
+  }
+  
+  .mcc-brand-name {
+    font-size: 24px;
+    font-weight: 600;
+    color: #02101f;
+    font-weight: 900;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    transition: color 0.3s ease;
+  }
+  
+  .mcc-brand-name:hover {
+    color: #0056b3;
+  }
+  
+  /* Middle Links */
+  .mcc-navbar-middle {
+    display: flex;
+    justify-content: flex-start; /* Center the middle links */
+    flex-grow: 1; /* Take up remaining space */
+    padding-left: 80px;
+  }
+  
+  .mcc-navbar-nav-middle {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center; /* Vertically center the links */
+  }
+  
+  .mcc-navbar-nav-middle .mcc-nav-item {
+    margin-left: 50px; /* Add spacing between middle links */
+  }
+  
+  /* Navbar Links (Right-side) */
+  .mcc-navbar-links {
+    display: flex;
+    align-items: center;
+  }
+  
+  .mcc-navbar-nav {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .mcc-nav-link {
+    font-size: 16px;
+    font-weight: 500;
+    color: #343a40;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .mcc-nav-link:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+  }
+  
+  /* User Avatar */
+  .mcc-user-avatar {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding-left: 50px;
+  }
+  
+  .mcc-avatar-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .mcc-username {
+    font-size: 14px;
+    font-weight: 500;
+    color: #343a40;
+  }
+  
+  /* Sign In and Sign Up Buttons */
+  .mcc-btn-signin,
+  .mcc-btn-signup {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .mcc-btn-signin {
+    color: #007bff;
+  }
+  
+  .mcc-btn-signin:hover {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  .mcc-btn-signup {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  .mcc-btn-signup:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Toggle Button for Mobile */
+  .mcc-navbar-toggler {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .mcc-navbar-toggler-icon {
+    width: 24px;
+    height: 24px;
+    background-color: #007bff;
+    border-radius: 4px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .mcc-navbar-container {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: 10px;
+    }
+  
+    .mcc-navbar-middle {
+      justify-content: flex-start; /* Align middle links to the left on mobile */
+    }
+  
+    .mcc-navbar-links {
+      width: 100%;
+      margin-top: 10px;
+    }
+  
+    .mcc-navbar-nav,
+    .mcc-navbar-nav-middle {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    .mcc-nav-item {
+      margin: 5px 0;
+    }
+  
+    .mcc-navbar-toggler {
+      display: block;
+    }
+  
+    .mcc-navbar-links.collapsed {
+      display: none;
+    }
+  
+    .mcc-navbar-brand {
+      margin-left: 10px;
+    }
+  
+    .mcc-logo {
+      width: 50px; /* Smaller logo for mobile */
+      max-height: 40px; /* Smaller logo for mobile */
+    }
+  }

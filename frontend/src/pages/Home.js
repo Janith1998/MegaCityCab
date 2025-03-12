@@ -7,13 +7,21 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { debounce } from 'lodash';
 import L from 'leaflet';
 import 'leaflet-routing-machine';
+
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import cab from '../assets/cab.jpg';
+
+//components
+import Navbar from '../components/Navbar';
+import Carousel from '../components/Carousel';
+
+
 import '../pages/Home.css';
-import slide1 from '../assets/slide1.jpg';
-import slide2 from '../assets/slide2.jpg';
+
 import redMarker from '../assets/red-marker.png';
 
-function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
+
+function Routing({ pickupCoords, dropoffCoords, setRouteDetails , setPricing}) {
   const map = useMap();
   const routingControlRef = useRef(null);
   const [routeInfo, setRouteInfo] = useState(null);
@@ -47,14 +55,14 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
           name: name || 'Unnamed Route',
         });
 
-        const arrivalTime = new Date();
-        arrivalTime.setMinutes(arrivalTime.getMinutes() + duration / 60);
-        const formattedArrivalTime = arrivalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        console.log("Estimated Arrival Time: ", formattedArrivalTime);  // Add this line for debugging
-        setEstimatedArrivalTime(formattedArrivalTime);
-      },
-
-    }).addTo(map);
+    const arrivalTime = new Date();
+    arrivalTime.setMinutes(arrivalTime.getMinutes() + duration / 60);
+    const formattedArrivalTime = arrivalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setEstimatedArrivalTime(formattedArrivalTime);
+   
+  
+  },
+}).addTo(map);
 
     // Listen to the "routesfound" event to get the route info
     routingControl.on('routesfound', (event) => {
@@ -69,7 +77,7 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
       }
     });
 
-    routingControlRef.current = routingControl;
+    routingControlRef.current = routingControl; 
 
     return () => {
       if (routingControlRef.current) {
@@ -119,6 +127,19 @@ function Home() {
   const [pickupDate, setPickupDate] = useState('');
   const [message, setMessage] = useState('');
   const [asap, setAsap] = useState(false);
+  const [pickupLat, setPickupLat] = useState('');  // Store pickup latitude
+  const [pickupLon, setPickupLon] = useState('');  // Store pickup longitude
+  const [dropoffLat, setDropoffLat] = useState(''); // Store dropoff latitude
+  const [dropoffLon, setDropoffLon] = useState(''); // Store dropoff longitude
+  const [pricing, setPricing] = useState(null);     // Store the calculated price
+  const [price, setPrice] = useState(null);
+  const [cars, setCars] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const carsPerPage = 6;
+
+  
+
+
 
   const provider = new OpenStreetMapProvider();
   
@@ -131,7 +152,12 @@ function Home() {
     shadowSize: [41, 41]
   });
 
+  
+
   useEffect(() => {
+
+    fetchCars();
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -169,25 +195,62 @@ function Home() {
 
   const handleSuggestionClick = async (suggestion, isPickup) => {
     const results = await provider.search({ query: suggestion });
-
+  
     if (results[0]) {
       const { x, y } = results[0];
       const coords = [y, x];
-
+  
       if (isPickup) {
         setPickupLocation(suggestion);
         setPickupCoords(coords);
+        setPickupLat(y); // Store pickup latitude
+        setPickupLon(x); // Store pickup longitude
         setPickupSuggestions([]);
       } else {
         setDropoffLocation(suggestion);
         setDropoffCoords(coords);
+        setDropoffLat(y); // Store dropoff latitude
+        setDropoffLon(x); // Store dropoff longitude
         setDropoffSuggestions([]);
       }
-      
       console.log('Location:', suggestion);
       console.log('Coordinates:', coords);
     }
   };
+  
+  // Function to handle price calculation
+  const handleCalculatePrice = async () => {
+    if (!pickupLat || !pickupLon || !dropoffLat || !dropoffLon) {
+      console.error('Pickup or dropoff coordinates missing');
+      return; // Ensure we have all coordinates before making the request
+    }
+  
+    const data = {
+      pickupLat: parseFloat(pickupLat), // Parse to float to ensure proper number format
+      pickupLon: parseFloat(pickupLon),
+      dropoffLat: parseFloat(dropoffLat),
+      dropoffLon: parseFloat(dropoffLon),
+    };
+  
+    try {
+      const response = await fetch('http://localhost:8080/pricing/calculation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      const result = await response.json();
+      const roundedPrice = Math.round(result.price * 100) / 100; // Round to two decimal places
+      setPrice(roundedPrice); // Set price value from backend response
+      console.log('Calculated Price:', roundedPrice); // Optional: Debugging line
+    } catch (error) {
+      console.error('Error calculating price:', error);
+    }
+  };
+  
+
 
   const MapUpdater = ({ coords }) => {
     const map = useMap();
@@ -201,42 +264,114 @@ function Home() {
     return null;
   };
 
+
+  const fetchCars = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/cars/available');
+      const data = await response.json();
+      setCars(data);
+    } catch (error) {
+      console.error('Error fetching cars:', error);
+    }
+  };
+
+    // Calculate the cars to display on the current page
+    const indexOfLastCar = currentPage * carsPerPage;
+    const indexOfFirstCar = indexOfLastCar - carsPerPage;
+    const currentCars = cars.slice(indexOfFirstCar, indexOfLastCar);
+
+      // Handle pagination navigation
+  const nextPage = () => {
+    if (currentPage < Math.ceil(cars.length / carsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+
+  const handleBookNow = (car) => {
+    console.log('Booking car:', car);
+  };
+
+  
+
+
   return (
     <div>
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg sticky-top">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="#">Mega City Cab</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item"><a className="nav-link active" href="#">Home</a></li>
-              <li className="nav-item"><button className="btn btn-primary ms-2" onClick={() => navigate('/LoginPage')}>Sign In</button></li>
-              <li className="nav-item"><button className="btn btn-secondary ms-2" onClick={() => navigate('/register')}>Sign Up</button></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
+
 
       {/* Carousel */}
-      <div id="carouselExample" className="carousel slide" data-bs-ride="carousel">
-        <div className="carousel-inner">
-          <div className="carousel-item active">
-            <img src={slide1} className="d-block w-100" alt="Cab 1" />
-          </div>
-          <div className="carousel-item">
-            <img src={slide2} className="d-block w-100" alt="Cab 2" />
-          </div>
+
+      <Carousel />
+
+      
+      {/* Services Section */}
+      <div className="container my-4">
+        <h2 className="text-center">Our Services</h2>
+        <div className="row">
+          {/* Dynamic Car Cards */}
+          {currentCars.map((car) => (
+            <div className="col-md-4 mb-4" key={car.id}>
+              <div className="card">
+                <img
+                  src={`data:image/jpeg;base64,${car.image}`}
+                  className="card-img-top"
+                  alt={car.brand}
+                  style={{ height: '200px', objectFit: 'cover' }}
+                />
+                <div className="card-body">
+                  <h5 className="card-title">{car.brand}</h5>
+                  <button
+                  className="book-now-button w-100 mt-3"
+                  onClick={() => handleBookNow(car)}
+                >
+                  Book Now
+                </button>
+                </div>
+              </div>
+            </div>
+          ))}
+
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-center mt-4">
+          <button
+            className="btn btn-primary me-2"
+            onClick={prevPage}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={nextPage}
+            disabled={currentPage === Math.ceil(cars.length / carsPerPage)}
+          >
+            Next
+          </button>
         </div>
       </div>
+    </div> 
+
+
+
+
+
+
+
 
       {/* Main Content */}
       <div className="container my-4">
         <div className="row">
           {/* Form Section */}
-          <div className="col-md-6">
+          <div className="col-md-5">
             <div className="card p-4">
               <h3>Book a Ride</h3>
               <form>
@@ -296,6 +431,27 @@ function Home() {
                       ))}
                     </ul>
                   )}
+
+          
+                  
+                        {/* Button to Calculate Price */}
+                        <Button
+                  variant="primary"
+                  type="button"  // Use type="button" to avoid form submission
+                  onClick={(e) => {
+                    e.preventDefault();  // Prevent page refresh
+                    handleCalculatePrice();
+                  }}
+                >
+                  Calculate Price
+                </Button>
+
+
+              {/* Display the calculated price */}
+              {price !== null && <p>Price: Rs {price}</p>}
+
+
+
                   {/* Phone Number */}
                 <Form.Group className="mb-3">
                   <Form.Label>Phone Number</Form.Label>
@@ -362,9 +518,9 @@ function Home() {
           </div>
 
           {/* Map Section */}
-          <div className="col-md-6">
+          <div className="col-md-7">
             {pickupCoords && (
-              <MapContainer center={pickupCoords} zoom={13} style={{ height: '400px', width: '100%' }}>
+              <MapContainer center={pickupCoords} zoom={9} style={{ height: '800px', width: '100%' }}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {pickupCoords && <Marker position={pickupCoords} icon={customIcon}><Popup>Pickup Location</Popup></Marker>}
                 {dropoffCoords && <Marker position={dropoffCoords} icon={customIcon}><Popup>Dropoff Location</Popup></Marker>}

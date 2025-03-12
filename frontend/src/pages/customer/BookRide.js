@@ -7,6 +7,8 @@ import { debounce } from 'lodash';
 import L from 'leaflet';
 import 'leaflet-routing-machine';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify'; // Import toast
+import 'react-toastify/dist/ReactToastify.css'; // Import toast CSS
 
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import redMarker from '../../assets/red-marker.png';
@@ -22,12 +24,10 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
   useEffect(() => {
     if (!map || !pickupCoords || !dropoffCoords) return;
 
-    // Remove the existing routing control if it exists
     if (routingControlRef.current) {
       routingControlRef.current.remove();
     }
 
-    // Create the new routing control
     const routingControl = L.Routing.control({
       waypoints: [
         L.latLng(pickupCoords[0], pickupCoords[1]),
@@ -35,15 +35,14 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
       ],
       routeWhileDragging: true,
       lineOptions: { styles: [{ color: 'blue', weight: 5 }] },
-      createMarker: () => null, // No marker
+      createMarker: () => null,
       showAlternatives: false,
       routeSelected: (e) => {
-        // Update the route details when a route is selected
         const { summary, duration, distance, name } = e.route;
         setRouteDetails({
           summary: summary,
-          duration: (duration / 60).toFixed(2), // in minutes
-          distance: (distance / 1000).toFixed(2), // in kilometers
+          duration: (duration / 60).toFixed(2),
+          distance: (distance / 1000).toFixed(2),
           name: name || 'Unnamed Route',
         });
 
@@ -54,14 +53,13 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
       },
     }).addTo(map);
 
-    // Listen to the "routesfound" event to get the route info
     routingControl.on('routesfound', (event) => {
       const { routes } = event;
       if (routes && routes.length > 0) {
-        const route = routes[0]; // The first route
+        const route = routes[0];
         setRouteInfo({
-          distance: route.summary.totalDistance / 1000, // Distance in km
-          duration: route.summary.totalTime / 60, // Duration in minutes
+          distance: route.summary.totalDistance / 1000,
+          duration: route.summary.totalTime / 60,
           name: route.name || 'Unnamed Route',
         });
       }
@@ -72,7 +70,7 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
     return () => {
       if (routingControlRef.current) {
         routingControlRef.current.remove();
-        routingControlRef.current = null; // Clear reference
+        routingControlRef.current = null;
       }
     };
   }, [map, pickupCoords, dropoffCoords, setRouteDetails]);
@@ -106,7 +104,16 @@ function BookRide({ car }) {
   const [dropoffLon, setDropoffLon] = useState('');
   const [price, setPrice] = useState(null);
   const [asap, setAsap] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // Refs for form fields
+  const pickupDateRef = useRef(null);
+  const pickupTimeRef = useRef(null);
+  const passengersRef = useRef(null);
+  const luggageRef = useRef(null);
+  const additionalMessageRef = useRef(null);
 
   const provider = new OpenStreetMapProvider();
 
@@ -211,6 +218,73 @@ function BookRide({ car }) {
     }
   };
 
+  const handleBookRide = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      toast.info('Please log in to make a booking.', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+      setTimeout(() => {
+        navigate('/LoginPage');
+      }, 100);
+      setIsLoading(false);
+      return;
+    }
+
+    const bookingData = {
+      userId: localStorage.getItem('userId'),
+      carId: car.id,
+      pickupLocation,
+      dropoffLocation,
+      pickupLat: parseFloat(pickupLat),
+      pickupLon: parseFloat(pickupLon),
+      dropoffLat: parseFloat(dropoffLat),
+      dropoffLon: parseFloat(dropoffLon),
+      price,
+      pickupTime: asap
+        ? new Date()
+        : new Date(`${pickupDateRef.current.value}T${pickupTimeRef.current.value}`),
+      passengers: parseInt(passengersRef.current.value),
+      luggage: luggageRef.current.value,
+      additionalMessage: additionalMessageRef.current.value,
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create booking');
+      }
+
+      const result = await response.json();
+      console.log('Booking successful:', result);
+      toast.success('Booking successful!', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+      navigate('/customer/dashboard');
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      toast.error('Failed to create booking. Please try again.', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const MapUpdater = ({ coords }) => {
     const map = useMap();
 
@@ -224,29 +298,31 @@ function BookRide({ car }) {
   };
 
   return (
-       
     <div className="book-ride-container">
+      {/* Toast Container */}
+      <ToastContainer />
+
       {/* Booking Form */}
       <div className="booking-form">
-      <div className="booking-form-header">
-        <h3>Book a Ride</h3>
-        {car ? (        
-        <img
+        <div className="booking-form-header">
+          <h3>Book a Ride</h3>
+          {car ? (
+            <img
               src={`data:image/jpeg;base64,${car.image}`}
               alt={car.brand}
-              className="car-image" 
-              />
-        ) : (
-          <button
+              className="car-image"
+            />
+          ) : (
+            <button
               className="pick-a-cab-button"
-              onClick={() => navigate('/')} // Navigate to Home.js
+              onClick={() => navigate('/')}
             >
               Pick A Cab
             </button>
-
-            )}
-    </div>
-        <form>
+          )}
+        </div>
+        <form onSubmit={handleBookRide}>
+          {/* Pickup Location Input */}
           <div className="mb-3">
             <label className="form-label">Pickup Location</label>
             <input
@@ -259,7 +335,6 @@ function BookRide({ car }) {
                 handleLocationChange(e, true);
               }}
             />
-            {/* Pickup Suggestions Dropdown */}
             {pickupSuggestions.length > 0 && (
               <ul className="list-group">
                 {pickupSuggestions.map((suggestion, index) => (
@@ -288,7 +363,6 @@ function BookRide({ car }) {
                 handleLocationChange(e, false);
               }}
             />
-            {/* Dropoff Suggestions Dropdown */}
             {dropoffSuggestions.length > 0 && (
               <ul className="list-group">
                 {dropoffSuggestions.map((suggestion, index) => (
@@ -304,7 +378,7 @@ function BookRide({ car }) {
             )}
           </div>
 
-          {/* Button to Calculate Price */}
+          {/* Calculate Price Button */}
           <Button
             variant="primary"
             type="button"
@@ -316,15 +390,16 @@ function BookRide({ car }) {
             Calculate Price
           </Button>
 
-          {/* Display the calculated price */}
+          {/* Display Price */}
           {price !== null && <p className="price-display">Price: Rs {price}</p>}
 
-          {/* Additional Form Fields */}
+          {/* Phone Number Input */}
           <Form.Group className="mb-3">
             <Form.Label>Phone Number</Form.Label>
             <Form.Control type="tel" placeholder="Enter phone number" />
           </Form.Group>
 
+          {/* ASAP Checkbox */}
           <Form.Group className="mb-3">
             <Form.Check
               type="checkbox"
@@ -334,33 +409,44 @@ function BookRide({ car }) {
             />
           </Form.Group>
 
+          {/* Pickup Date and Time */}
           <Row className="mb-3">
             <Col>
               <Form.Group>
                 <Form.Label>Pickup Date</Form.Label>
-                <Form.Control type="date" disabled={asap} />
+                <Form.Control
+                  type="date"
+                  disabled={asap}
+                  ref={pickupDateRef} // Add ref
+                />
               </Form.Group>
             </Col>
             <Col>
               <Form.Group>
                 <Form.Label>Pickup Time</Form.Label>
-                <Form.Control type="time" disabled={asap} />
+                <Form.Control
+                  type="time"
+                  disabled={asap}
+                  ref={pickupTimeRef} // Add ref
+                />
               </Form.Group>
             </Col>
           </Row>
 
+          {/* Passengers Dropdown */}
           <Form.Group className="mb-3">
             <Form.Label>Passengers</Form.Label>
-            <Form.Control as="select">
+            <Form.Control as="select" ref={passengersRef}>
               {[...Array(6).keys()].map((num) => (
                 <option key={num + 1}>{num + 1}</option>
               ))}
             </Form.Control>
           </Form.Group>
 
+          {/* Luggage Dropdown */}
           <Form.Group className="mb-3">
             <Form.Label>Luggage</Form.Label>
-            <Form.Control as="select">
+            <Form.Control as="select" ref={luggageRef}>
               <option>No Luggage</option>
               <option>Small Bag</option>
               <option>Medium Suitcase</option>
@@ -368,14 +454,23 @@ function BookRide({ car }) {
             </Form.Control>
           </Form.Group>
 
+          {/* Additional Message Textarea */}
           <Form.Group className="mb-3">
             <Form.Label>Additional Message</Form.Label>
-            <Form.Control as="textarea" rows={3} placeholder="Any special requests..." />
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Any special requests..."
+              ref={additionalMessageRef} // Add ref
+            />
           </Form.Group>
 
-          <button type="submit" className="btn btn-primary"
-          disabled={!car}
-          >
+          {/* Loading and Error Messages */}
+          {isLoading && <p>Loading...</p>}
+          {error && <p className="text-danger">{error}</p>}
+
+          {/* Submit Button */}
+          <button type="submit" className="btn btn-primary" disabled={!car || isLoading}>
             Book Ride
           </button>
         </form>

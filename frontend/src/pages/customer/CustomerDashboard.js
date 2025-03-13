@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import DataTable from 'react-data-table-component';
+import { MdCancel, MdVisibility, MdEdit } from 'react-icons/md'; // Import icons
 import BookRide from './BookRide'; // Import the BookRide component
 import '../customer/CustomerDashboard.css';
 
@@ -81,6 +83,67 @@ function CustomerDashboard() {
       alert('Failed to delete booking');
     }
   };
+
+  const columns = [
+    {
+      name: 'Booking ID',
+      selector: row => row.bookingId,
+      sortable: true,
+    },
+    {
+      name: 'Pickup Location',
+      selector: row => row.pickupLocation,
+      sortable: true,
+    },
+    {
+      name: 'Dropoff Location',
+      selector: row => row.dropoffLocation,
+      sortable: true,
+    },
+    {
+      name: 'Price',
+      selector: row => `Rs ${row.price.toFixed(2)}`,
+      sortable: true,
+    },
+    {
+      name: 'Status',
+      selector: row => row.status,
+      sortable: true,
+      cell: row => (
+        <span className={`badge bg-${row.status === 'Completed' ? 'success' : row.status === 'Pending' ? 'warning' : 'danger'}`}>
+          {row.status}
+        </span>
+      ),
+    },
+    {
+      name: 'Actions',
+      cell: row => (
+        <div className="d-flex gap-2">
+          <MdVisibility
+            className="text-primary cursor-pointer"
+            size={20}
+            title="View"
+            onClick={() => handleViewBooking(row.id)}
+          />
+          <MdEdit
+            className="text-warning cursor-pointer"
+            size={20}
+            title="Update"
+            onClick={() => handleUpdateBooking(row.id)}
+          />
+          <MdCancel
+            className="text-danger cursor-pointer"
+            size={20}
+            title="Delete"
+            onClick={() => handleDeleteBooking(row.id)}
+          />
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+  ];
 
   return (
     <div className="container-fluid">
@@ -200,54 +263,43 @@ function CustomerDashboard() {
                       <div className="card-header bg-secondary text-white">
                         <h5>Recent Bookings</h5>
                       </div>
-                      <div className="card-body"  style={{ maxHeight: "400px", overflowY: "auto" }}>
-                        <table className="table table-striped">
-                          <thead>
-                            <tr>
-                              <th>Booking ID</th>
-                              <th>Pickup Location</th>
-                              <th>Dropoff Location</th>
-                              <th>Price</th>
-                              <th>Status</th>
-                              <th>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {bookings.map((booking) => (
-                              <tr key={booking.id}>
-                                <td>{booking.bookingId}</td> {/* Use booking.bookingId instead of booking.id */}
-                                <td>{booking.pickupLocation}</td>
-                                <td>{booking.dropoffLocation}</td>
-                                <td>Rs {booking.price.toFixed(2)}</td>
-                                <td>
-                                  <span className={`badge bg-${booking.status === 'Completed' ? 'success' : booking.status === 'Pending' ? 'warning' : 'danger'}`}>
-                                    {booking.status}
-                                  </span>
-                                </td>
-                                <td>
-                                  <button
-                                    className="btn btn-primary btn-sm me-2"
-                                    onClick={() => handleViewBooking(booking.id)}
-                                  >
-                                    View
-                                  </button>
-                                  <button
-                                    className="btn btn-warning btn-sm me-2"
-                                    onClick={() => handleUpdateBooking(booking.id)}
-                                  >
-                                    Update
-                                  </button>
-                                  <button
-                                    className="btn btn-danger btn-sm"
-                                    onClick={() => handleDeleteBooking(booking.id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                      <div className="card-body" style={{ overflowX: 'auto' }}>
+                        <DataTable
+                          columns={columns}
+                          data={bookings}
+                          pagination
+                          responsive
+                          highlightOnHover
+                          striped
+                          noHeader
+                          fixedHeader
+                          fixedHeaderScrollHeight="400px"
+                          customStyles={{
+                            table: {
+                              style: {
+                                width: '100%',
+                              },
+                            },
+                            headRow: {
+                              style: {
+                                backgroundColor: '#f8f9fa',
+                                borderBottom: '1px solid #dee2e6',
+                              },
+                            },
+                            headCells: {
+                              style: {
+                                color: '#495057',
+                                fontWeight: 'bold',
+                                padding: '12px',
+                              },
+                            },
+                            cells: {
+                              style: {
+                                padding: '12px',
+                              },
+                            },
+                          }}
+                        />
                       </div>
                     </div>
                   </div>

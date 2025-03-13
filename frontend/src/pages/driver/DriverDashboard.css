@@ -1,0 +1,171 @@
+/* Navbar Styling */
+.navbar {
+  padding: 10px 20px;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  margin-left: 20px;
+}
+
+.date-time {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.notification-icon {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-icon-img {
+  width: 24px;
+  height: 24px;
+  margin-right: 50px;
+  
+}
+
+.notification-icon .badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 0.75rem;
+  background-color: #dc3545; 
+  border-radius: 50%;
+  padding: 4px 6px;
+  margin-right: 50px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.user-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  margin-right: 20px;
+}
+
+/* Card Styling */
+.card-custom {
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f4a21f, #f4b03a);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-custom .card-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.card-custom .card-text {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* Table Styling */
+.DataTable {
+  font-size: 0.9rem;
+}
+
+.DataTable th,
+.DataTable td {
+  padding: 12px 15px;
+}
+
+.DataTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.DataTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+.card-header{
+  background-color: rgb(13, 2, 76) !important;
+}
+
+/* Footer styling */
+.footer {
+  position: relative;
+  width: 100%;
+  height: 250px; /* Adjust height as needed */
+  background-image: url('../../assets/bg2.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+  margin-top: 40px; /* Add some space above the footer */
+}
+
+/* Overlay styling */
+.footer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Adjust opacity as needed */
+}
+
+/* Footer content styling */
+.footer-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Footer information styling */
+.footer-info {
+  text-align: left;
+}
+
+/* Footer logo styling */
+.footer-logo img {
+  max-width: 100px; /* Adjust size as needed */
+  height: auto;
+}
+
+/* Add this to your CSS file */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.text-success {
+  color: #28a745;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}

@@ -64,7 +64,7 @@ public class AuthController {
     if (role.equalsIgnoreCase("Customer")) {
         user = new User(password, role,userId, name, email, contactNumber, contactNumber2, userImage, nicImages);
     } else if (role.equalsIgnoreCase("Driver")) {
-        user = new User(password, role, name, email, contactNumber, contactNumber2, nicNumber, userImage, nicImages);
+        user = new User(password, role,userId, name, email, contactNumber, contactNumber2, nicNumber, userImage, nicImages);
     } else {
         return "Invalid role!";
     }

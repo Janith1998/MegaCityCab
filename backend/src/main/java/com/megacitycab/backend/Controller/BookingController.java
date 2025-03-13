@@ -1,6 +1,7 @@
 package com.megacitycab.backend.Controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -113,4 +114,87 @@ public class BookingController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    // BookingController.java
+@PutMapping("/{id}/assign-driver")
+public ResponseEntity<Booking> assignDriverToBooking(@PathVariable String id, @RequestBody Map<String, String> payload) {
+    try {
+        String userId = payload.get("userId");
+        Booking booking = bookingRepository.findById(id).orElse(null);
+        if (booking == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        booking.setUserId(userId);
+        booking.setStatus("Assigned"); // Update status
+        bookingRepository.save(booking);
+
+        // Send notification to the driver (you can use a notification service here)
+        sendNotificationToUser(userId, "You have been assigned to a new booking!");
+
+        return new ResponseEntity<>(booking, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+private void sendNotificationToUser(String userId, String message) {
+    // Implement notification logic (e.g., email, SMS, or push notification)
+    System.out.println("Notification sent to driver " + userId + ": " + message);
+}
+
+
+// Get bookings assigned to a specific driver
+@GetMapping("/assign-driver/{userId}")
+public ResponseEntity<List<Booking>> getBookingsByuserId(@PathVariable String userId) {
+    try {
+        List<Booking> bookings = bookingRepository.findByUserId(userId);
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+// Confirm a booking
+@PutMapping("/confirm/{bookingId}")
+public ResponseEntity<Booking> confirmBooking(@PathVariable String bookingId) {
+    try {
+        System.out.println("Confirming booking with bookingId: " + bookingId); // Logging
+        Booking booking = bookingRepository.findByBookingId(bookingId); // Use findByBookingId
+        if (booking == null) {
+            System.out.println("Booking not found with bookingId: " + bookingId); // Logging
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        booking.setStatus("Confirmed");
+        bookingRepository.save(booking);
+        System.out.println("Booking confirmed: " + bookingId); // Logging
+        return new ResponseEntity<>(booking, HttpStatus.OK);
+    } catch (Exception e) {
+        System.out.println("Error confirming booking: " + e.getMessage()); // Logging
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+// Cancel a booking
+@PutMapping("/cancel/{bookingId}")
+public ResponseEntity<Booking> cancelBooking(@PathVariable String bookingId) {
+    try {
+        System.out.println("Canceling booking with bookingId: " + bookingId); // Logging
+        Booking booking = bookingRepository.findByBookingId(bookingId); // Use findByBookingId
+        if (booking == null) {
+            System.out.println("Booking not found with bookingId: " + bookingId); // Logging
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        booking.setStatus("Pending");
+        bookingRepository.save(booking);
+        System.out.println("Booking canceled: " + bookingId); // Logging
+        return new ResponseEntity<>(booking, HttpStatus.OK);
+    } catch (Exception e) {
+        System.out.println("Error canceling booking: " + e.getMessage()); // Logging
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+
 }

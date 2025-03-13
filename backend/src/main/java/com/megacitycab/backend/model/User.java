@@ -25,10 +25,11 @@ public class User {
     public User() {}
 
     // Constructor for "Customer" user (without NIC images)
-    public User(String password, String role, String name, String email, String contactNumber, 
+    public User(String password, String role,String userId, String name, String email, String contactNumber, 
                 String contactNumber2, MultipartFile userImage, MultipartFile[] nicImages) {
         this.password = password;
         this.role = role;
+        this.userId = userId;
         this.name = name;
         this.email = email;
         this.contactNumber = contactNumber;
@@ -40,9 +41,9 @@ public class User {
     }
 
     // Constructor for "Driver" user (with NIC number)
-    public User(String password, String role, String name, String email, String contactNumber,
+    public User(String password, String role,String userId, String name, String email, String contactNumber,
                 String contactNumber2, String nicNumber, MultipartFile userImage, MultipartFile[] nicImages) {
-        this(password, role, name, email, contactNumber, contactNumber2, userImage, nicImages);
+        this(password, role,userId, name, email, contactNumber, contactNumber2, userImage, nicImages);
         this.nicNumber = nicNumber;
     }
 

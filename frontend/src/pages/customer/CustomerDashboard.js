@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import BookRide from './BookRide'; // Import the BookRide component
 import '../customer/CustomerDashboard.css';
@@ -9,12 +9,40 @@ function CustomerDashboard() {
   const { car } = location.state || {}; // Retrieve car data from navigation state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showBookRide, setShowBookRide] = useState(!!car); // Automatically show BookRide if car data is present
+  const [bookings, setBookings] = useState([]); // State to store bookings
+
+  // Fetch bookings from the backend
+  useEffect(() => {
+    const fetchBookings = async () => {
+      const userId = localStorage.getItem('userId');
+      console.log('User ID from localStorage:', userId);
+      if (!userId) {
+        console.error('User ID not found. Redirecting to login...');
+        // navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8080/bookings/user/${userId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch bookings');
+        }
+        const data = await response.json();
+        setBookings(data); // Set the fetched bookings to state
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      }
+    };
+
+    fetchBookings();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userId');
     navigate('/'); // Redirect to homepage after logout
   };
 
@@ -24,6 +52,34 @@ function CustomerDashboard() {
 
   const handleDashboardClick = () => {
     setShowBookRide(false); // Show the default dashboard content
+  };
+
+  // Handle view booking action
+  const handleViewBooking = (bookingId) => {
+    navigate(`/booking/${bookingId}`); // Navigate to booking details page
+  };
+
+  // Handle update booking action
+  const handleUpdateBooking = (bookingId) => {
+    navigate(`/booking/update/${bookingId}`); // Navigate to update booking page
+  };
+
+  // Handle delete booking action
+  const handleDeleteBooking = async (bookingId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/bookings/${bookingId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete booking');
+      }
+      // Remove the deleted booking from the state
+      setBookings(bookings.filter((booking) => booking.id !== bookingId));
+      alert('Booking deleted successfully');
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      alert('Failed to delete booking');
+    }
   };
 
   return (
@@ -144,39 +200,52 @@ function CustomerDashboard() {
                       <div className="card-header bg-secondary text-white">
                         <h5>Recent Bookings</h5>
                       </div>
-                      <div className="card-body">
+                      <div className="card-body"  style={{ maxHeight: "400px", overflowY: "auto" }}>
                         <table className="table table-striped">
                           <thead>
                             <tr>
                               <th>Booking ID</th>
-                              <th>Date</th>
                               <th>Pickup Location</th>
                               <th>Dropoff Location</th>
+                              <th>Price</th>
                               <th>Status</th>
+                              <th>Actions</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>#12345</td>
-                              <td>2023-10-01</td>
-                              <td>Colombo</td>
-                              <td>Kandy</td>
-                              <td><span className="badge bg-success">Completed</span></td>
-                            </tr>
-                            <tr>
-                              <td>#12346</td>
-                              <td>2023-10-05</td>
-                              <td>Galle</td>
-                              <td>Colombo</td>
-                              <td><span className="badge bg-warning">In Progress</span></td>
-                            </tr>
-                            <tr>
-                              <td>#12347</td>
-                              <td>2023-10-10</td>
-                              <td>Negombo</td>
-                              <td>Colombo</td>
-                              <td><span className="badge bg-danger">Cancelled</span></td>
-                            </tr>
+                            {bookings.map((booking) => (
+                              <tr key={booking.id}>
+                                <td>{booking.bookingId}</td> {/* Use booking.bookingId instead of booking.id */}
+                                <td>{booking.pickupLocation}</td>
+                                <td>{booking.dropoffLocation}</td>
+                                <td>Rs {booking.price.toFixed(2)}</td>
+                                <td>
+                                  <span className={`badge bg-${booking.status === 'Completed' ? 'success' : booking.status === 'Pending' ? 'warning' : 'danger'}`}>
+                                    {booking.status}
+                                  </span>
+                                </td>
+                                <td>
+                                  <button
+                                    className="btn btn-primary btn-sm me-2"
+                                    onClick={() => handleViewBooking(booking.id)}
+                                  >
+                                    View
+                                  </button>
+                                  <button
+                                    className="btn btn-warning btn-sm me-2"
+                                    onClick={() => handleUpdateBooking(booking.id)}
+                                  >
+                                    Update
+                                  </button>
+                                  <button
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => handleDeleteBooking(booking.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>

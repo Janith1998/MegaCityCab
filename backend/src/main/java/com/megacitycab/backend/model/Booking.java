@@ -10,6 +10,7 @@ public class Booking {
 
     @Id
     private String id;
+    private String bookingId;
     private String userId; // ID of the user making the booking
     private String carId; // ID of the car being booked
     private String pickupLocation;
@@ -54,6 +55,14 @@ public class Booking {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
     }
 
     public String getUserId() {

@@ -33,11 +33,11 @@ public class AuthController {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.getPassword().equals(password)) {
-                return new Response("Login successful!", user.getRole(), user.getName());
+                return new Response("Login successful!", user.getRole(), user.getName(), user.getUserId());
             }
         }
 
-        return new Response("Invalid email or password", null,null);
+        return new Response("Invalid email or password", null,null,null);
     }
 
     // Register driver endpoint (save user to DB)
@@ -46,6 +46,7 @@ public class AuthController {
     public String register(@RequestParam String email, 
                        @RequestParam String password,
                        @RequestParam String role, // added role
+                       @RequestParam String userId,
                        @RequestParam String name,
                        @RequestParam String contactNumber,
                        @RequestParam(required = false) String contactNumber2,
@@ -61,7 +62,7 @@ public class AuthController {
     // Create a new user based on role and input data
     User user;
     if (role.equalsIgnoreCase("Customer")) {
-        user = new User(password, role, name, email, contactNumber, contactNumber2, userImage, nicImages);
+        user = new User(password, role,userId, name, email, contactNumber, contactNumber2, userImage, nicImages);
     } else if (role.equalsIgnoreCase("Driver")) {
         user = new User(password, role, name, email, contactNumber, contactNumber2, nicNumber, userImage, nicImages);
     } else {
@@ -82,16 +83,22 @@ public class AuthController {
 
     // Response DTO class to return the message and role
     public static class Response {
+       
         private String message;
         private String role;
         private String name;
+        private String userId;
+       
 
-        public Response(String message, String role , String name) {
+        public Response(String message, String role , String name,String userId) {
             this.message = message;
             this.role = role;
             this.name = name;
+            this.userId = userId;
+           
         }
 
+        
         public String getMessage() {
             return message;
         }
@@ -114,5 +121,14 @@ public class AuthController {
         public void setName(String name) {
             this.name = name;
         }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void settUserId(String userId) {
+            this.userId = userId;
+        }
+
     }
 }

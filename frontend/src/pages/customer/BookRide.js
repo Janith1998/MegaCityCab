@@ -236,8 +236,18 @@ function BookRide({ car }) {
       return;
     }
 
+    const userId = localStorage.getItem('userId'); // Get the logged-in user's ID
+    if (!userId) {
+      toast.error('User ID not found. Please log in again.', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
     const bookingData = {
-      userId: localStorage.getItem('userId'),
+      userId,
       carId: car.id,
       pickupLocation,
       dropoffLocation,
@@ -273,7 +283,20 @@ function BookRide({ car }) {
         position: 'top-center',
         autoClose: 3000,
       });
+          // Reset form inputs
+    setPrice(null);
+    setAsap(false);
+    setIsLoading(false);
+
+      // Reset ref values
+      pickupDateRef.current.value = '';
+      pickupTimeRef.current.value = '';
+      passengersRef.current.value = '1'; // Default to 1 passenger
+      luggageRef.current.value = 'No Luggage'; // Default to no luggage
+      additionalMessageRef.current.value = '';
+      setTimeout(() => {
       navigate('/customer/dashboard');
+    }, 3000); // Redirect after 3 seconds
     } catch (error) {
       console.error('Error creating booking:', error);
       toast.error('Failed to create booking. Please try again.', {
@@ -436,7 +459,7 @@ function BookRide({ car }) {
           {/* Passengers Dropdown */}
           <Form.Group className="mb-3">
             <Form.Label>Passengers</Form.Label>
-            <Form.Control as="select" ref={passengersRef}>
+            <Form.Control as="select" ref={passengersRef} defaultValue="1">
               {[...Array(6).keys()].map((num) => (
                 <option key={num + 1}>{num + 1}</option>
               ))}
@@ -446,7 +469,7 @@ function BookRide({ car }) {
           {/* Luggage Dropdown */}
           <Form.Group className="mb-3">
             <Form.Label>Luggage</Form.Label>
-            <Form.Control as="select" ref={luggageRef}>
+            <Form.Control as="select" ref={luggageRef} defaultValue="No Luggage">
               <option>No Luggage</option>
               <option>Small Bag</option>
               <option>Medium Suitcase</option>

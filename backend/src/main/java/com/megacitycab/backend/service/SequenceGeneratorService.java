@@ -24,4 +24,10 @@ public class SequenceGeneratorService {
         Counter counter = mongoOperations.findAndModify(query, update, options, Counter.class);
         return counter != null ? counter.getSequence_value() : 1;
     }
+
+       // Method to generate a booking ID
+       public String generateBookingId() {
+        int sequence = generateSequence("booking_sequence");
+        return "BOOK" + String.format("%05d", sequence); // Example: BOOK00001
+    }
 }

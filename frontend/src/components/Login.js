@@ -32,6 +32,7 @@ function Login() {
         localStorage.setItem('userRole', response.data.role);
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userName', response.data.name);
+        localStorage.setItem('userId', response.data.userId);
 
         // Simulate a delay for the loader before navigating
         setTimeout(() => {

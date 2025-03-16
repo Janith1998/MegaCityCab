@@ -506,8 +506,8 @@ function DriverDashboard() {
         </div>
       ),
       ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
+     // allowOverflow: true,
+      //button: true,
     },
   ];
 

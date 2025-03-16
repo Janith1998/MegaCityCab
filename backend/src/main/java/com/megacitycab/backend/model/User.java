@@ -24,7 +24,7 @@ public class User {
 
     public User() {}
 
-    // Constructor for "Customer" user (without NIC images)
+
     public User(String password, String role,String userId, String name, String email, String contactNumber, 
                 String contactNumber2, MultipartFile userImage, MultipartFile[] nicImages) {
         this.password = password;

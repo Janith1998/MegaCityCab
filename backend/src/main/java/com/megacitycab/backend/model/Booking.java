@@ -24,9 +24,9 @@ public class Booking {
     private int passengers;
     private String luggage;
     private String additionalMessage;
-    private String status; // e.g., "Pending", "Confirmed", "Completed"
+    private String status; 
 
-    // Constructors, Getters, and Setters
+
     public Booking() {}
 
     public Booking(String userId, String carId, String pickupLocation, String dropoffLocation,

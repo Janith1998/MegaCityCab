@@ -16,7 +16,7 @@ public class Car {
 
     public Car() {}
 
-    // Constructor
+
     public Car(String brand, String model, String licensePlate, String image) {
         this.brand = brand;
         this.model = model;
@@ -24,7 +24,7 @@ public class Car {
         this.image = image;
     }
 
-    // Getters and Setters
+
     public String getId() {
         return id;
     }

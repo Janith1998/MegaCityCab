@@ -308,7 +308,23 @@ function CustomerDashboard() {
             )}
           </div>
         </div>
+        {/* Footer */}
+        <footer className="footer">
+        <div className="footer-overlay"></div>
+        <div className="footer-content">
+          <div className="footer-info">
+            <p>Mega City Cab</p>
+            <p>123 Main Street, City, Country</p>
+            <p>Email: info@megacitycab.com</p>
+            <p>Phone: +123 456 7890</p>
+          </div>
+          <div className="footer-logo">
+            <img src="path-to-your-logo.png" alt="Company Logo" />
+          </div>
+        </div>
+      </footer>
       </div>
+      
     </div>
   );
 }

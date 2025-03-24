@@ -67,3 +67,119 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000; /* Ensure it is above the map */
 }
+
+
+
+/* Bill Container */
+.bill-container {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Bill Header */
+.bill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bill-title h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.bill-title p {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.bill-contact {
+  text-align: right;
+}
+
+.bill-contact p {
+  font-size: 14px;
+  color: #34495e;
+  margin: 4px 0;
+}
+
+/* Separator Line */
+.bill-separator {
+  border: 0;
+  height: 1px;
+  background: #ddd;
+  margin: 20px 0;
+}
+
+/* Bill Details */
+.bill-details {
+  margin-bottom: 20px;
+}
+
+.bill-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.bill-label {
+  font-weight: bold;
+  color: #34495e;
+}
+
+.bill-value {
+  color: #2c3e50;
+}
+
+/* Bill Table */
+.bill-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.bill-table th,
+.bill-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.bill-table th {
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+}
+
+.bill-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Total Amount */
+.bill-total {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.bill-total .bill-label {
+  margin-right: 10px;
+}
+
+/* Bill Footer */
+.bill-footer {
+  text-align: center;
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-top: 20px;
+}

@@ -1,25 +1,28 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, Modal } from 'react-bootstrap';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { debounce } from 'lodash';
 import L from 'leaflet';
 import 'leaflet-routing-machine';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify'; // Import toast
-import 'react-toastify/dist/ReactToastify.css'; // Import toast CSS
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import jsPDF from 'jspdf';
+import {} from 'jspdf-autotable';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import redMarker from '../../assets/red-marker.png';
 
 import './BookRide.css';
 
+// Routing Component (unchanged)
 function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
   const map = useMap();
   const routingControlRef = useRef(null);
   const [routeInfo, setRouteInfo] = useState(null);
   const [estimatedArrivalTime, setEstimatedArrivalTime] = useState(null);
+  
 
   useEffect(() => {
     if (!map || !pickupCoords || !dropoffCoords) return;
@@ -37,26 +40,50 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
       lineOptions: { styles: [{ color: 'blue', weight: 5 }] },
       createMarker: () => null,
       showAlternatives: false,
+
       routeSelected: (e) => {
         const { summary, duration, distance, name } = e.route;
+        const arrivalTime = new Date();
+        arrivalTime.setMinutes(arrivalTime.getMinutes() + duration / 60);
+        const formattedArrivalTime = arrivalTime.toLocaleTimeString([], { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: true
+        });
         setRouteDetails({
           summary: summary,
           duration: (duration / 60).toFixed(2),
           distance: (distance / 1000).toFixed(2),
           name: name || 'Unnamed Route',
+          estimatedArrivalTime: formattedArrivalTime
         });
 
-        const arrivalTime = new Date();
-        arrivalTime.setMinutes(arrivalTime.getMinutes() + duration / 60);
-        const formattedArrivalTime = arrivalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         setEstimatedArrivalTime(formattedArrivalTime);
       },
     }).addTo(map);
+
+
 
     routingControl.on('routesfound', (event) => {
       const { routes } = event;
       if (routes && routes.length > 0) {
         const route = routes[0];
+        const arrivalTime = new Date();
+        arrivalTime.setMinutes(arrivalTime.getMinutes() + route.summary.totalTime / 60);
+        const formattedArrivalTime = arrivalTime.toLocaleTimeString([], { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: true
+        });
+
+        setRouteDetails(prev => ({
+          ...prev,
+          distance: (route.summary.totalDistance / 1000).toFixed(2),
+          duration: (route.summary.totalTime / 60).toFixed(2),
+          name: route.name || 'Unnamed Route',
+          estimatedArrivalTime: formattedArrivalTime
+        }));
+
         setRouteInfo({
           distance: route.summary.totalDistance / 1000,
           duration: route.summary.totalTime / 60,
@@ -90,6 +117,120 @@ function Routing({ pickupCoords, dropoffCoords, setRouteDetails }) {
   );
 }
 
+// Bill Component for PDF Generation and Confirmation
+function BillComponent({ bookingData, onConfirm, onCancel, routeDetails }) {
+  const handleDownloadBill = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("Booking Bill", 105, 20, { align: "center" });
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Pickup Location: ${bookingData.pickupLocation}`, 20, 40);
+    doc.text(`Dropoff Location: ${bookingData.dropoffLocation}`, 20, 50);
+    doc.text(`Price: Rs ${bookingData.price}`, 20, 60);
+    doc.text(`Passengers: ${bookingData.passengers}`, 20, 70);
+    doc.text(`Luggage: ${bookingData.luggage}`, 20, 80);
+    doc.text(`Distance: ${routeDetails?.distance || 'Calculating...'} km`, 20, 90);
+    doc.text(`Estimated Arrival Time: ${routeDetails?.estimatedArrivalTime || 'Calculating...'}`, 20, 100);
+
+    doc.save("booking_bill.pdf");
+  };
+
+  return (
+    <Modal show={true} onHide={onCancel} size="lg" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Booking Bill</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="bill-container">
+          {/* Header Section */}
+          <div className="bill-header">
+            <div className="bill-title">
+              <h2>Megacity Cab</h2>
+              <p>Booking Invoice</p>
+            </div>
+            <div className="bill-contact">
+              <p>Contact us: 84653864</p>
+              <p>Email: info@megacity.lk</p>
+              <p>Address: galeehfjddjhf</p>
+            </div>
+          </div>
+
+          {/* Separator Line */}
+          <hr className="bill-separator" />
+
+          {/* Booking Details Section */}
+          <div className="bill-details">
+            <div className="bill-row">
+              <span className="bill-label">Customer:</span>
+              <span className="bill-value">{localStorage.getItem('userName')}</span>
+            </div>
+            <div className="bill-row">
+              <span className="bill-label">Pickup Location:</span>
+              <span className="bill-value">{bookingData.pickupLocation}</span>
+            </div>
+            <div className="bill-row">
+              <span className="bill-label">Dropoff Location:</span>
+              <span className="bill-value">{bookingData.dropoffLocation}</span>
+            </div>
+            <div className="bill-row">
+              <span className="bill-label">Pickup Time:</span>
+              <span className="bill-value">
+                {new Date(bookingData.pickupTime).toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          {/* Table for Pricing Details */}
+          <table className="bill-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Distance</th>
+                <th>estimatedArrivalTime</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Booking</td>
+                <td>{routeDetails?.distance || 'Calculating...'} km</td>
+                <td>{routeDetails?.estimatedArrivalTime || 'Calculating...'}</td>
+                <td>Rs {bookingData.price}</td>
+                <td>Rs {bookingData.price}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* Total Amount Section */}
+          <div className="bill-total">
+            <span className="bill-label">Total Amount:</span>
+            <span className="bill-value">Rs {bookingData.price}</span>
+          </div>
+
+          {/* Footer Section */}
+          <div className="bill-footer">
+            <p>Thank you for choosing Megacity Cab!</p>
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={() => { onConfirm(); handleDownloadBill(); }}>
+          Confirm & Download
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+
+// Main BookRide Component
 function BookRide({ car }) {
   const [pickupLocation, setPickupLocation] = useState('');
   const [dropoffLocation, setDropoffLocation] = useState('');
@@ -97,7 +238,12 @@ function BookRide({ car }) {
   const [dropoffCoords, setDropoffCoords] = useState(null);
   const [pickupSuggestions, setPickupSuggestions] = useState([]);
   const [dropoffSuggestions, setDropoffSuggestions] = useState([]);
-  const [routeDetails, setRouteDetails] = useState(null);
+  const [routeDetails, setRouteDetails] = useState({
+    distance: null,
+    estimatedArrivalTime: null,
+    duration: null,
+    name: null
+  });
   const [pickupLat, setPickupLat] = useState('');
   const [pickupLon, setPickupLon] = useState('');
   const [dropoffLat, setDropoffLat] = useState('');
@@ -106,6 +252,10 @@ function BookRide({ car }) {
   const [asap, setAsap] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showBill, setShowBill] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [bookingData, setBookingData] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
 
   // Refs for form fields
@@ -218,10 +368,30 @@ function BookRide({ car }) {
     }
   };
 
+  const validateForm = () => {
+    const errors = {};
+
+    if (!pickupLocation) errors.pickupLocation = 'Pickup location is required.';
+    if (!dropoffLocation) errors.dropoffLocation = 'Dropoff location is required.';
+    if (!asap && !pickupDateRef.current.value) errors.pickupDate = 'Pickup date is required.';
+    if (!asap && !pickupTimeRef.current.value) errors.pickupTime = 'Pickup time is required.';
+    if (!passengersRef.current.value) errors.passengers = 'Number of passengers is required.';
+    if (!luggageRef.current.value) errors.luggage = 'Luggage option is required.';
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
+  };
+
   const handleBookRide = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+
+    // Validate form
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (!isLoggedIn) {
@@ -236,7 +406,7 @@ function BookRide({ car }) {
       return;
     }
 
-    const userId = localStorage.getItem('userId'); // Get the logged-in user's ID
+    const userId = localStorage.getItem('userId');
     if (!userId) {
       toast.error('User ID not found. Please log in again.', {
         position: 'top-center',
@@ -262,8 +432,15 @@ function BookRide({ car }) {
       passengers: parseInt(passengersRef.current.value),
       luggage: luggageRef.current.value,
       additionalMessage: additionalMessageRef.current.value,
+      
     };
 
+    setBookingData(bookingData);
+    setShowBill(true);
+    setIsLoading(false);
+  };
+
+  const handleConfirmBooking = async () => {
     try {
       const response = await fetch('http://localhost:8080/bookings', {
         method: 'POST',
@@ -283,29 +460,35 @@ function BookRide({ car }) {
         position: 'top-center',
         autoClose: 3000,
       });
-          // Reset form inputs
-    setPrice(null);
-    setAsap(false);
-    setIsLoading(false);
 
-      // Reset ref values
-      pickupDateRef.current.value = '';
-      pickupTimeRef.current.value = '';
-      passengersRef.current.value = '1'; // Default to 1 passenger
-      luggageRef.current.value = 'No Luggage'; // Default to no luggage
-      additionalMessageRef.current.value = '';
+      setShowBill(false);
       setTimeout(() => {
-      navigate('/customer/dashboard');
-    }, 3000); // Redirect after 3 seconds
+        navigate('/customer/dashboard');
+      }, 3000);
     } catch (error) {
       console.error('Error creating booking:', error);
       toast.error('Failed to create booking. Please try again.', {
         position: 'top-center',
         autoClose: 3000,
       });
-    } finally {
-      setIsLoading(false);
     }
+  };
+
+  const handleCancelBooking = () => {
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmationClose = () => {
+    setShowConfirmation(false);
+  };
+
+  const handleConfirmationYes = () => {
+    setShowConfirmation(false);
+    setShowBill(false);
+  };
+
+  const handleConfirmationNo = () => {
+    setShowConfirmation(false);
   };
 
   const MapUpdater = ({ coords }) => {
@@ -350,7 +533,7 @@ function BookRide({ car }) {
             <label className="form-label">Pickup Location</label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${validationErrors.pickupLocation ? 'is-invalid' : ''}`}
               value={pickupLocation}
               placeholder="Enter pickup location"
               onChange={(e) => {
@@ -358,6 +541,9 @@ function BookRide({ car }) {
                 handleLocationChange(e, true);
               }}
             />
+            {validationErrors.pickupLocation && (
+              <div className="invalid-feedback">{validationErrors.pickupLocation}</div>
+            )}
             {pickupSuggestions.length > 0 && (
               <ul className="list-group">
                 {pickupSuggestions.map((suggestion, index) => (
@@ -378,7 +564,7 @@ function BookRide({ car }) {
             <label className="form-label">Dropoff Location</label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${validationErrors.dropoffLocation ? 'is-invalid' : ''}`}
               value={dropoffLocation}
               placeholder="Enter dropoff location"
               onChange={(e) => {
@@ -386,6 +572,9 @@ function BookRide({ car }) {
                 handleLocationChange(e, false);
               }}
             />
+            {validationErrors.dropoffLocation && (
+              <div className="invalid-feedback">{validationErrors.dropoffLocation}</div>
+            )}
             {dropoffSuggestions.length > 0 && (
               <ul className="list-group">
                 {dropoffSuggestions.map((suggestion, index) => (
@@ -440,8 +629,12 @@ function BookRide({ car }) {
                 <Form.Control
                   type="date"
                   disabled={asap}
-                  ref={pickupDateRef} // Add ref
+                  ref={pickupDateRef}
+                  className={validationErrors.pickupDate ? 'is-invalid' : ''}
                 />
+                {validationErrors.pickupDate && (
+                  <div className="invalid-feedback">{validationErrors.pickupDate}</div>
+                )}
               </Form.Group>
             </Col>
             <Col>
@@ -450,8 +643,12 @@ function BookRide({ car }) {
                 <Form.Control
                   type="time"
                   disabled={asap}
-                  ref={pickupTimeRef} // Add ref
+                  ref={pickupTimeRef}
+                  className={validationErrors.pickupTime ? 'is-invalid' : ''}
                 />
+                {validationErrors.pickupTime && (
+                  <div className="invalid-feedback">{validationErrors.pickupTime}</div>
+                )}
               </Form.Group>
             </Col>
           </Row>
@@ -459,22 +656,38 @@ function BookRide({ car }) {
           {/* Passengers Dropdown */}
           <Form.Group className="mb-3">
             <Form.Label>Passengers</Form.Label>
-            <Form.Control as="select" ref={passengersRef} defaultValue="1">
+            <Form.Control
+              as="select"
+              ref={passengersRef}
+              defaultValue="1"
+              className={validationErrors.passengers ? 'is-invalid' : ''}
+            >
               {[...Array(6).keys()].map((num) => (
                 <option key={num + 1}>{num + 1}</option>
               ))}
             </Form.Control>
+            {validationErrors.passengers && (
+              <div className="invalid-feedback">{validationErrors.passengers}</div>
+            )}
           </Form.Group>
 
           {/* Luggage Dropdown */}
           <Form.Group className="mb-3">
             <Form.Label>Luggage</Form.Label>
-            <Form.Control as="select" ref={luggageRef} defaultValue="No Luggage">
+            <Form.Control
+              as="select"
+              ref={luggageRef}
+              defaultValue="No Luggage"
+              className={validationErrors.luggage ? 'is-invalid' : ''}
+            >
               <option>No Luggage</option>
               <option>Small Bag</option>
               <option>Medium Suitcase</option>
               <option>Large Suitcase</option>
             </Form.Control>
+            {validationErrors.luggage && (
+              <div className="invalid-feedback">{validationErrors.luggage}</div>
+            )}
           </Form.Group>
 
           {/* Additional Message Textarea */}
@@ -484,7 +697,7 @@ function BookRide({ car }) {
               as="textarea"
               rows={3}
               placeholder="Any special requests..."
-              ref={additionalMessageRef} // Add ref
+              ref={additionalMessageRef}
             />
           </Form.Group>
 
@@ -515,6 +728,34 @@ function BookRide({ car }) {
           </MapContainer>
         )}
       </div>
+
+      {/* Bill Component */}
+      {showBill && (
+        <BillComponent
+          bookingData={bookingData}
+          onConfirm={handleConfirmBooking}
+          onCancel={handleCancelBooking}
+          routeDetails={routeDetails}
+        />
+      )}
+
+      {/* Confirmation Dialog */}
+      <Modal show={showConfirmation} onHide={handleConfirmationClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Are you sure?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to cancel the booking?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleConfirmationYes}>
+            Yes
+          </Button>
+          <Button variant="primary" onClick={handleConfirmationNo}>
+            No
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

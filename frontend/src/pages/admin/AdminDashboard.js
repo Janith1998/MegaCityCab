@@ -1,16 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
-import { MdCancel, MdVisibility, MdEdit } from 'react-icons/md'; // Import icons
+import { MdCancel, MdVisibility, MdEdit } from 'react-icons/md'; 
 import ManageCars from './forms/ManageCars';
 import ViewCars from './forms/ViewCars';
 import ManageDriver from './forms/ManageDriver';
+import ManageCustomer from './forms/ManageCustomer';
+import { ToastContainer } from 'react-toastify';
 
 function AdminDashboard() {
   const [isCollapseOpen, setIsCollapseOpen] = useState(false);
-  const [bookings, setBookings] = useState([]); // State to store all bookings
-  const [drivers, setDrivers] = useState([]); // State to store all drivers
+  const [bookings, setBookings] = useState([]); 
+  const [drivers, setDrivers] = useState([]); 
+  const [counts, setCounts] = useState({
+    drivers: 0,
+    customers: 0,
+    pendingBookings: 0
+  });
   const navigate = useNavigate();
+
+   // Fetch counts from the backend
+   useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const [driversRes, customersRes, pendingRes] = await Promise.all([
+          fetch('http://localhost:8080/users/count/drivers'),
+          fetch('http://localhost:8080/users/count/customers'),
+          fetch('http://localhost:8080/bookings/count/pending')
+        ]);
+
+        const driversCount = await driversRes.json();
+        const customersCount = await customersRes.json();
+        const pendingCount = await pendingRes.json();
+
+        setCounts({
+          drivers: driversCount,
+          customers: customersCount,
+          pendingBookings: pendingCount
+        });
+      } catch (error) {
+        console.error('Error fetching counts:', error);
+      }
+    };
+
+    fetchCounts();
+  }, []);
 
   // Fetch all bookings from the backend
   useEffect(() => {
@@ -200,6 +234,7 @@ function AdminDashboard() {
 
   return (
     <div className="container-fluid">
+       <ToastContainer />
       <div className="row">
         {/* Sidebar */}
         <div className="col-md-3 col-lg-2 p-0 bg-dark text-white min-vh-100">
@@ -213,7 +248,7 @@ function AdminDashboard() {
                 <Link to="/admin/forms/ManageDriver" className="nav-link text-white" style={{ fontSize: '14px' }}>Manage Drivers</Link>
               </li>
               <li className="nav-item">
-                <Link to="/admin/manage-customers" className="nav-link text-white" style={{ fontSize: '14px' }}>Manage Customers</Link>
+              <Link to="/admin/forms/ManageCustomer" className="nav-link text-white" style={{ fontSize: '14px' }}>Manage Customers</Link>
               </li>
               <li className="nav-item" onClick={handleToggleCollapse}>
                 <div className="d-flex justify-content-between align-items-center">
@@ -255,7 +290,10 @@ function AdminDashboard() {
                           <div className="col-sm-4">
                             <div className="card text-white bg-success mb-3">
                               <div className="card-body">
-                                <h5 className="card-title" style={{ fontSize: '16px' }}>Active Drivers</h5>
+                                <h5 className="card-title" style={{ fontSize: '16px' }}>Drivers</h5>
+                                <p className="card-text" style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                                  {counts.drivers}
+                                </p>
                                 <p className="card-text" style={{ fontSize: '14px' }}>View and manage all active drivers.</p>
                               </div>
                             </div>
@@ -264,6 +302,9 @@ function AdminDashboard() {
                             <div className="card text-white bg-warning mb-3">
                               <div className="card-body">
                                 <h5 className="card-title" style={{ fontSize: '16px' }}>Active Customers</h5>
+                                <p className="card-text" style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                                  {counts.customers}
+                                </p>
                                 <p className="card-text" style={{ fontSize: '14px' }}>View and manage all active customers.</p>
                               </div>
                             </div>
@@ -272,6 +313,9 @@ function AdminDashboard() {
                             <div className="card text-white bg-info mb-3">
                               <div className="card-body">
                                 <h5 className="card-title" style={{ fontSize: '16px' }}>Pending Bookings</h5>
+                                <p className="card-text" style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                                  {counts.pendingBookings}
+                                </p>
                                 <p className="card-text" style={{ fontSize: '14px' }}>View and manage all pending bookings.</p>
                               </div>
                             </div>
@@ -338,6 +382,7 @@ function AdminDashboard() {
               <Route path="/forms" element={<ManageCars />} />
               <Route path="/forms/viewCar" element={<ViewCars />} />
               <Route path="/forms/ManageDriver" element={<ManageDriver />} />
+              <Route path="/forms/ManageCustomer" element={<ManageCustomer />} />
             </Routes>
           </div>
         </div>

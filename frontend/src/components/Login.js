@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
-import './Login.css'; // Add this if you want to style the loader
+import { Container, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [showLoader, setShowLoader] = useState(false); // Track loader state
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowLoader(true); // Show loader when the form is submitted
+    
+    if (!email || !password) {
+      setErrorMessage('Please enter both email and password');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage('');
 
     try {
       const response = await axios.post(
@@ -26,7 +34,6 @@ function Login() {
         }
       );
 
-      console.log(response.data);
       if (response.data?.message === 'Login successful!') {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userRole', response.data.role);
@@ -34,32 +41,41 @@ function Login() {
         localStorage.setItem('userName', response.data.name);
         localStorage.setItem('userId', response.data.userId);
 
-        // Simulate a delay for the loader before navigating
+        // Show success toast
+        toast.success('Login successful! Redirecting...');
+        
+        // Navigate after short delay
         setTimeout(() => {
           if (response.data?.role === 'Admin') navigate('/admin/dashboard');
           else if (response.data?.role === 'Driver') navigate('/driver/dashboard');
           else if (response.data?.role === 'Customer') navigate('/customer/dashboard');
-        }, 2000); // 2 seconds loader duration
+        }, 1500);
+      } else {
+        // Handle unexpected successful response without proper data
+        setErrorMessage('Login failed. Please try again.');
+        setIsLoading(false);
       }
     } catch (error) {
-      setShowLoader(false); // Hide loader on error
-      setErrorMessage(error.response ? 'Invalid email or password.' : 'An error occurred. Please try again later.');
+      setIsLoading(false);
+      const serverMessage = error.response?.data?.message;
+      
+      if (serverMessage) {
+        setErrorMessage(serverMessage);
+        toast.error(serverMessage);
+      } else {
+        setErrorMessage('An error occurred. Please try again later.');
+        toast.error('An error occurred. Please try again later.');
+      }
     }
   };
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
-      {/* Loader */}
-      {showLoader && (
-        <div className="loader-overlay">
-          <div className="loader"></div>
-        </div>
-      )}
-
       <Card className="shadow-lg p-4" style={{ width: '400px' }}>
         <Card.Body>
           <h2 className="text-center mb-4">Mega City Cab Login</h2>
           {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+          
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="email">
               <Form.Label>Email</Form.Label>
@@ -83,10 +99,28 @@ function Login() {
               />
             </Form.Group>
 
-            <Button variant="primary" type="submit" className="w-100" disabled={showLoader}>
-              {showLoader ? 'Logging in...' : 'Login'}
+            <Button 
+              variant="primary" 
+              type="submit" 
+              className="w-100" 
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                    className="me-2"
+                  />
+                  Logging in...
+                </>
+              ) : 'Login'}
             </Button>
           </Form>
+          
           <div className="text-center mt-3">
             <span>Don't have an account? </span>
             <Button variant="link" onClick={() => navigate('/register')}>

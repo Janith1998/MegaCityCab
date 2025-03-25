@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS
+import { ToastContainer, toast } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
 import Navbar from '../components/Navbar';
 import Carousel from '../components/Carousel';
 import './Home.css';
@@ -10,13 +10,13 @@ const Home = () => {
   const navigate = useNavigate();
   const [cars, setCars] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
-  const [showLoader, setShowLoader] = useState(false); // Track loader state
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [showLoader, setShowLoader] = useState(false); 
   const carsPerPage = 6;
 
   useEffect(() => {
     fetchCars();
-    // Check if the user is logged in (e.g., from localStorage or context)
+   
     const loggedInStatus = localStorage.getItem('isLoggedIn') === 'true';
     setIsLoggedIn(loggedInStatus);
   }, []);
@@ -49,10 +49,10 @@ const Home = () => {
 
   const handleBookNow = (car) => {
     if (!isLoggedIn) {
-      // Show a toast notification if the user is not logged i
+      
       toast.info('Please log in to the system to make a booking.', {
         position: 'top-center',
-        autoClose: 3000, // Close after 3 seconds
+        autoClose: 3000, 
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -237,7 +237,8 @@ const Home = () => {
             <div className="col-lg-6 mb-4 mb-lg-0">
               <div className="contact-info">
                 <div className="contact-item mb-4">
-                  <h5 className="mb-2"><i className="bi bi-geo-alt-fill me-2"></i> Address</h5>
+                  <h5 className="mb-2">
+                    <i className="bi bi-geo-alt-fill me-2"></i> Address</h5>
                   <p>123 Main Street, Colombo 01, Sri Lanka</p>
                 </div>
                 <div className="contact-item mb-4">

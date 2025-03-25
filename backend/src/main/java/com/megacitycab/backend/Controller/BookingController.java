@@ -196,5 +196,14 @@ public ResponseEntity<Booking> cancelBooking(@PathVariable String bookingId) {
     }
 }
 
+@GetMapping("/count/pending")
+public ResponseEntity<Long> countPendingBookings() {
+    try {
+        long count = bookingRepository.countByStatus("Pending");
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
 }

@@ -11,5 +11,6 @@ import com.megacitycab.backend.model.Booking;
 public interface BookingRepository extends MongoRepository<Booking, String> {
      List<Booking> findByUserId(String userId);
      Booking findByBookingId(String bookingId);
+     long countByStatus(String status);
      
 }

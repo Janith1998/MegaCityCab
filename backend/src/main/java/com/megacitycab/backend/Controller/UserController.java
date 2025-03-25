@@ -250,8 +250,62 @@ public ResponseEntity<User> addCustomer(@RequestParam("name") String name,
 }
 
 
-  
+@GetMapping("/count/drivers")
+public ResponseEntity<Long> countDrivers() {
+    try {
+        long count = userRepository.countByRole("Driver");
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
+@GetMapping("/count/customers")
+public ResponseEntity<Long> countCustomers() {
+    try {
+        long count = userRepository.countByRole("Customer");
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+// Update Customer (Simple JSON update)
+@PutMapping("/customers/{id}")
+public ResponseEntity<User> updateCustomer(
+    @PathVariable String id,
+    @RequestBody User updatedCustomer) {
+    
+    try {
+        User existingUser = userService.getUserById(id);
+        if (existingUser == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Update only allowed fields for customers
+        if (updatedCustomer.getName() != null) {
+            existingUser.setName(updatedCustomer.getName());
+        }
+        if (updatedCustomer.getEmail() != null) {
+            existingUser.setEmail(updatedCustomer.getEmail());
+        }
+        if (updatedCustomer.getContactNumber() != null) {
+            existingUser.setContactNumber(updatedCustomer.getContactNumber());
+        }
+        if (updatedCustomer.getNicNumber() != null) {
+            existingUser.setNicNumber(updatedCustomer.getNicNumber());
+        }
+        if (updatedCustomer.getPassword() != null && !updatedCustomer.getPassword().isEmpty()) {
+            existingUser.setPassword(updatedCustomer.getPassword());
+        }
+
+        User savedUser = userRepository.save(existingUser);
+        return new ResponseEntity<>(savedUser, HttpStatus.OK);
+    } catch (Exception e) {
+        logger.error("Error updating customer: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
 
 }

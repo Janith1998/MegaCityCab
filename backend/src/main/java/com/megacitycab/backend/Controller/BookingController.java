@@ -207,5 +207,25 @@ public ResponseEntity<Long> countPendingBookings() {
 }
 
 
+// Complete a booking
+@PutMapping("/complete/{bookingId}")
+public ResponseEntity<Booking> completeBooking(@PathVariable String bookingId) {
+    try {
+        System.out.println("Completing booking with bookingId: " + bookingId);
+        Booking booking = bookingRepository.findByBookingId(bookingId);
+        if (booking == null) {
+            System.out.println("Booking not found with bookingId: " + bookingId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        booking.setStatus("Completed");
+        bookingRepository.save(booking);
+        System.out.println("Booking completed: " + bookingId);
+        return new ResponseEntity<>(booking, HttpStatus.OK);
+    } catch (Exception e) {
+        System.out.println("Error completing booking: " + e.getMessage());
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
 
 }

@@ -205,3 +205,99 @@ color: #007bff;
   height: 400px;
 }
 }
+
+
+/* Table styling */
+.table-container {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  min-width: 1000px; /* Ensures table has minimum width before scrolling */
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.table th {
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 10;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Pagination styling */
+.pagination {
+  margin: 0;
+}
+
+.page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.page-link {
+  color: #0d6efd;
+}
+
+/* Action buttons */
+/* .btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+} */
+
+/* Status badges */
+.badge {
+  font-size: 0.8em;
+  padding: 0.35em 0.65em;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-responsive {
+    border: 0;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+
+/* Icon buttons styling */
+.btn-icon {
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  transition: all 0.2s ease;
+  
+}
+
+.btn-icon:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  transform: scale(1.1);
+}
+
+.btn-icon:active {
+  transform: scale(0.95);
+}
+
+/* Icon colors */
+.text-primary { color: #0d6efd; }
+.text-warning { color: #ffc107; }
+.text-danger { color: #dc3545; }
+
+/* Hover colors */
+.btn-icon:hover .text-primary { color: #0b5ed7; }
+.btn-icon:hover .text-warning { color: #ffca2c; }
+.btn-icon:hover .text-danger { color: #bb2d3b; }

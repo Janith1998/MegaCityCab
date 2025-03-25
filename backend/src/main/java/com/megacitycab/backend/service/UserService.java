@@ -1,6 +1,9 @@
 package com.megacitycab.backend.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.megacitycab.backend.model.Booking;
 import com.megacitycab.backend.model.User;
+import com.megacitycab.backend.repository.BookingRepository;
 import com.megacitycab.backend.repository.CarRepository;
 import com.megacitycab.backend.repository.UserRepository;
 
@@ -22,6 +27,8 @@ public class UserService {
     @Autowired
     private CarRepository carRepository;
 
+    @Autowired
+    private BookingRepository bookingRepository;    
 
     @Autowired
     private SequenceGeneratorService sequenceGeneratorService;
@@ -97,7 +104,6 @@ public class UserService {
         }
     }
     
-
 
 
 
@@ -260,9 +266,93 @@ public String assignCarToDriver(String userId, String licensePlate) {
 }
 
 
+// Add this method to UserService.java
+public List<Map<String, Object>> generateDriverReport() {
+    List<User> drivers = userRepository.findByRole("Driver");
+    List<Map<String, Object>> report = new ArrayList<>();
+    
+    for (User driver : drivers) {
+        Map<String, Object> driverReport = new HashMap<>();
+        driverReport.put("driverId", driver.getUserId());
+        driverReport.put("driverName", driver.getName());
+        driverReport.put("contactNumber", driver.getContactNumber());
+        driverReport.put("assignedCar", 
+            driver.getAssignedCarLicensePlate() != null ? 
+            driver.getAssignedCarLicensePlate() : "No car assigned");
+        
+        // Get bookings (assigned or confirmed)
+        List<Booking> bookings = bookingRepository.findByUserIdAndStatusIn(
+            driver.getUserId(), 
+            Arrays.asList("Assigned", "Confirmed")
+        );
+        
+        // Convert bookings to simplified maps
+        List<Map<String, Object>> bookingMaps = new ArrayList<>();
+        for (Booking booking : bookings) {
+            Map<String, Object> bookingMap = new HashMap<>();
+            bookingMap.put("bookingId", booking.getBookingId());
+            bookingMap.put("pickupLocation", booking.getPickupLocation());
+            bookingMap.put("dropoffLocation", booking.getDropoffLocation());
+            bookingMap.put("pickupTime", booking.getPickupTime());
+            bookingMap.put("status", booking.getStatus());
+            bookingMaps.add(bookingMap);
+        }
+        
+        driverReport.put("bookings", bookingMaps);
+        report.add(driverReport);
+    }
+    
+    return report;
+}
 
 
-
+public List<Map<String, Object>> generateCustomerReport() {
+    List<User> customers = userRepository.findByRole("Customer");
+    List<Map<String, Object>> report = new ArrayList<>();
+    
+    for (User customer : customers) {
+        Map<String, Object> customerEntry = new HashMap<>();
+        customerEntry.put("customerId", customer.getUserId());
+        customerEntry.put("customerName", customer.getName());
+        customerEntry.put("customerEmail", customer.getEmail());
+        customerEntry.put("customerContact", customer.getContactNumber());
+        
+        // Get all bookings for this customer
+        List<Booking> bookings = bookingRepository.findByUserId(customer.getUserId());
+        List<Map<String, Object>> bookingDetails = new ArrayList<>();
+        
+        for (Booking booking : bookings) {
+            Map<String, Object> bookingEntry = new HashMap<>();
+            bookingEntry.put("bookingId", booking.getBookingId());
+            bookingEntry.put("pickupLocation", booking.getPickupLocation());
+            bookingEntry.put("dropoffLocation", booking.getDropoffLocation());
+            bookingEntry.put("pickupTime", booking.getPickupTime());
+            bookingEntry.put("price", booking.getPrice());
+            bookingEntry.put("status", booking.getStatus());
+            
+            // Find driver information if booking is assigned
+            if (booking.getStatus().equals("Assigned") || booking.getStatus().equals("Confirmed")) {
+                // The userId in booking is actually the driver's ID when assigned
+                User driver = userRepository.findByUserId(booking.getUserId());
+                if (driver != null && "Driver".equals(driver.getRole())) {
+                    Map<String, Object> driverInfo = new HashMap<>();
+                    driverInfo.put("driverId", driver.getUserId());
+                    driverInfo.put("driverName", driver.getName());
+                    driverInfo.put("driverContact", driver.getContactNumber());
+                    driverInfo.put("assignedCarLicensePlate", driver.getAssignedCarLicensePlate());
+                    bookingEntry.put("driverInfo", driverInfo);
+                }
+            }
+            
+            bookingDetails.add(bookingEntry);
+        }
+        
+        customerEntry.put("bookings", bookingDetails);
+        report.add(customerEntry);
+    }
+    
+    return report;
+}
     
 }
 

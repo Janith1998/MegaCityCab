@@ -8,6 +8,10 @@ import ManageDriver from './forms/ManageDriver';
 import ManageCustomer from './forms/ManageCustomer';
 import { ToastContainer } from 'react-toastify';
 
+import { MdPrint } from 'react-icons/md';
+import { saveAs } from 'file-saver';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+
 function AdminDashboard() {
   const [isCollapseOpen, setIsCollapseOpen] = useState(false);
   const [bookings, setBookings] = useState([]); 
@@ -18,6 +22,461 @@ function AdminDashboard() {
     pendingBookings: 0
   });
   const navigate = useNavigate();
+
+
+  const downloadCustomerReport = async () => {
+    try {
+      // Fetch the report data
+      const response = await fetch('http://localhost:8080/users/customer-report');
+      if (!response.ok) {
+        throw new Error('Failed to fetch report data');
+      }
+      const reportData = await response.json();
+  
+      // Create a new PDF document
+      const pdfDoc = await PDFDocument.create();
+      let page = pdfDoc.addPage([595, 842]); // A4 size
+      const { width, height } = page.getSize();
+      
+      // Add title and styling
+      const titleFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      
+      // Add header with logo and title
+      page.drawText('MegaCity Cab - Customer Report', {
+        x: 50,
+        y: height - 50,
+        size: 18,
+        font: titleFont,
+        color: rgb(0.2, 0.4, 0.6),
+      });
+      
+      // Add report date
+      const date = new Date().toLocaleDateString();
+      page.drawText(`Report generated: ${date}`, {
+        x: width - 200,
+        y: height - 50,
+        size: 10,
+        font: regularFont,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      // Add divider line
+      page.drawLine({
+        start: { x: 50, y: height - 70 },
+        end: { x: width - 50, y: height - 70 },
+        thickness: 1,
+        color: rgb(0.8, 0.8, 0.8),
+      });
+      
+      let yPosition = height - 90;
+  
+      // Helper function to get location summary
+      const getLocationSummary = (location) => {
+        if (!location) return '';
+        
+        const parts = location.split(',').map(part => part.trim());
+        const first = parts[0];
+        const last = parts[parts.length - 1];
+        
+        return `${first}, ${last}`;
+      };
+      
+      // Add customer information
+      for (const customer of reportData) {
+        // Customer header
+        page.drawText(`${customer.customerName}`, {
+          x: 50,
+          y: yPosition,
+          size: 14,
+          font: titleFont,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Customer details
+        page.drawText(`ID: ${customer.customerId} | Email: ${customer.email} | Contact: ${customer.contactNumber}`, {
+          x: 50,
+          y: yPosition - 20,
+          size: 10,
+          font: regularFont,
+          color: rgb(0.3, 0.3, 0.3),
+        });
+                
+        yPosition -= 55;
+        
+        // Bookings section
+        if (customer.bookings && customer.bookings.length > 0) {
+          page.drawText('Booking History:', {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: titleFont,
+            color: rgb(0.2, 0.4, 0.6),
+          });
+          
+          yPosition -= 20;
+          
+          // Bookings table header
+          page.drawText('Booking ID', {
+            x: 50,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          page.drawText('From', {
+            x: 150,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          page.drawText('To', {
+            x: 300,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          page.drawText('Driver', {
+            x: 400,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          page.drawText('Price', {
+            x: 500,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          
+          yPosition -= 15;
+          
+          // Bookings data
+          for (const booking of customer.bookings) {
+            page.drawText(booking.bookingId, {
+              x: 50,
+              y: yPosition,
+              size: 9,
+              font: regularFont,
+              color: rgb(0, 0, 0),
+            });
+  
+            // Pickup location (shortened)
+            page.drawText(getLocationSummary(booking.pickupLocation), {
+              x: 150,
+              y: yPosition,
+              size: 9,
+              font: regularFont,
+              color: rgb(0, 0, 0),
+            });
+            
+            // Dropoff location (shortened)
+            page.drawText(getLocationSummary(booking.dropoffLocation), {
+              x: 300,
+              y: yPosition,
+              size: 9,
+              font: regularFont,
+              color: rgb(0, 0, 0),
+            });
+            
+            // Driver info
+            page.drawText(booking.driverName || 'Not assigned', {
+              x: 400,
+              y: yPosition,
+              size: 9,
+              font: regularFont,
+              color: rgb(0, 0, 0),
+            });
+            
+            // Price
+            page.drawText(`Rs ${booking.price.toFixed(2)}`, {
+              x: 500,
+              y: yPosition,
+              size: 9,
+              font: regularFont,
+              color: rgb(0, 0, 0),
+            });
+            
+            yPosition -= 15;
+            
+            // Add booking date and status below
+            const bookingDate = new Date(booking.pickupTime).toLocaleString();
+            page.drawText(`${bookingDate} | ${booking.status}`, {
+              x: 150,
+              y: yPosition,
+              size: 8,
+              font: regularFont,
+              color: rgb(0.4, 0.4, 0.4),
+            });
+            
+            yPosition -= 15;
+            
+            // Add divider between bookings
+            page.drawLine({
+              start: { x: 50, y: yPosition + 5 },
+              end: { x: width - 50, y: yPosition + 5 },
+              thickness: 0.5,
+              color: rgb(0.9, 0.9, 0.9),
+            });
+            
+            yPosition -= 10;
+          }
+        } else {
+          page.drawText('No bookings found', {
+            x: 50,
+            y: yPosition,
+            size: 10,
+            font: regularFont,
+            color: rgb(0.5, 0.5, 0.5),
+          });
+        }
+        
+        yPosition -= 40;
+        
+        // Add page break if needed
+        if (yPosition < 100) {
+          page = pdfDoc.addPage([595, 842]);
+          yPosition = height - 50;
+        }
+      }
+      
+      // Add footer
+      const lastPage = pdfDoc.getPages()[pdfDoc.getPageCount() - 1];
+      lastPage.drawText('© MegaCity Cab - Confidential Report', {
+        x: 50,
+        y: 30,
+        size: 8,
+        font: regularFont,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      // Save the PDF
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      saveAs(blob, `Customer_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+    } catch (error) {
+      console.error('Error generating customer report:', error);
+      alert('Failed to download customer report');
+    }
+  };
+
+
+
+
+
+  const downloadDriverReport = async () => {
+    try {
+      // Fetch the report data
+      const response = await fetch('http://localhost:8080/users/driver-report');
+      if (!response.ok) {
+        throw new Error('Failed to fetch report data');
+      }
+      const reportData = await response.json();
+  
+      // Create a new PDF document
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([595, 842]); // A4 size
+      const { width, height } = page.getSize();
+      
+      // Add title and styling
+      const titleFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      
+      // Add header with logo and title
+      page.drawText('MegaCity Cab - Driver Report', {
+        x: 50,
+        y: height - 50,
+        size: 18,
+        font: titleFont,
+        color: rgb(0.2, 0.4, 0.6),
+      });
+      
+      // Add report date
+      const date = new Date().toLocaleDateString();
+      page.drawText(`Report generated: ${date}`, {
+        x: width - 200,
+        y: height - 50,
+        size: 10,
+        font: regularFont,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      // Add divider line
+      page.drawLine({
+        start: { x: 50, y: height - 70 },
+        end: { x: width - 50, y: height - 70 },
+        thickness: 1,
+        color: rgb(0.8, 0.8, 0.8),
+      });
+      
+      let yPosition = height - 90;
+
+      const getLocationSummary = (location) => {
+        if (!location) return '';
+        
+        const parts = location.split(',').map(part => part.trim());
+        const first = parts[0];
+        const last = parts[parts.length - 1];
+        
+        return `${first}, ${last}`;
+      };
+      
+      
+      // Add driver information
+      for (const driver of reportData) {
+        // Driver header
+        page.drawText(`${driver.driverName}`, {
+          x: 50,
+          y: yPosition,
+          size: 14,
+          font: titleFont,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Driver details
+        page.drawText(`ID: ${driver.driverId} | Contact: ${driver.contactNumber} | Car: ${driver.assignedCar || 'Not assigned'}`, {
+          x: 50,
+          y: yPosition - 20,
+          size: 10,
+          font: regularFont,
+          color: rgb(0.3, 0.3, 0.3),
+        });
+        
+        yPosition -= 40;
+        
+        // Bookings section
+        if (driver.bookings && driver.bookings.length > 0) {
+          page.drawText('Assigned Bookings:', {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: titleFont,
+            color: rgb(0.2, 0.4, 0.6),
+          });
+          
+          yPosition -= 20;
+          
+          // Bookings table header
+          page.drawText('Booking ID', {
+            x: 50,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          page.drawText('Pickup', {
+            x: 150,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          page.drawText('Dropoff', {
+            x: 300,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          page.drawText('Status', {
+            x: 450,
+            y: yPosition,
+            size: 10,
+            font: titleFont,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+          
+          yPosition -= 15;
+          
+          // Bookings data
+          for (const booking of driver.bookings) {
+            page.drawText(booking.bookingId, {
+              x: 50,
+              y: yPosition,
+              size: 9,
+              font: regularFont,
+              color: rgb(0, 0, 0),
+            });
+
+              // Modified to show first and last parts for pickup
+              page.drawText(getLocationSummary(booking.pickupLocation), {
+                x: 150,
+                y: yPosition,
+                size: 9,
+                font: regularFont,
+                color: rgb(0, 0, 0),
+              });
+              
+              // Modified to show first and last parts for dropoff
+              page.drawText(getLocationSummary(booking.dropoffLocation), {
+                x: 300,
+                y: yPosition,
+                size: 9,
+                font: regularFont,
+                color: rgb(0, 0, 0),
+              });
+
+
+            
+            // Color-code status
+            const statusColor = booking.status === 'Confirmed' ? rgb(0, 0.5, 0) : rgb(0.8, 0.5, 0);
+            page.drawText(booking.status, {
+              x: 450,
+              y: yPosition,
+              size: 9,
+              font: regularFont,
+              color: statusColor,
+            });
+            
+            yPosition -= 15;
+          }
+        } else {
+          page.drawText('No bookings assigned', {
+            x: 50,
+            y: yPosition,
+            size: 10,
+            font: regularFont,
+            color: rgb(0.5, 0.5, 0.5),
+          });
+        }
+        
+        yPosition -= 40;
+        
+        // Add page break 
+        if (yPosition < 100) {
+          yPosition = height - 50;
+          page = pdfDoc.addPage([595, 842]);
+        }
+      }
+      
+      // Add footer
+      const lastPage = pdfDoc.getPages()[pdfDoc.getPageCount() - 1];
+      lastPage.drawText('© MegaCity Cab - Confidential Report', {
+        x: 50,
+        y: 30,
+        size: 8,
+        font: regularFont,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      // Save the PDF
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      saveAs(blob, `Driver_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+    } catch (error) {
+      console.error('Error generating driver report:', error);
+      alert('Failed to download driver report');
+    }
+  };
+
+
+
 
    // Fetch counts from the backend
    useEffect(() => {
@@ -287,28 +746,64 @@ function AdminDashboard() {
                       </div>
                       <div className="card-body">
                         <div className="row">
-                          <div className="col-sm-4">
-                            <div className="card text-white bg-success mb-3">
-                              <div className="card-body">
-                                <h5 className="card-title" style={{ fontSize: '16px' }}>Drivers</h5>
-                                <p className="card-text" style={{ fontSize: '24px', fontWeight: 'bold' }}>
-                                  {counts.drivers}
-                                </p>
-                                <p className="card-text" style={{ fontSize: '14px' }}>View and manage all active drivers.</p>
-                              </div>
-                            </div>
+                        <div className="col-sm-4">
+                    <div className="card text-white bg-success mb-3">
+                      <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-start">
+                          <div>
+                            <h5 className="card-title" style={{ fontSize: '16px' }}>Drivers</h5>
+                            <p className="card-text" style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                              {counts.drivers}
+                            </p>
+                            <p className="card-text" style={{ fontSize: '14px' }}>View and manage all active drivers.</p>
                           </div>
-                          <div className="col-sm-4">
-                            <div className="card text-white bg-warning mb-3">
-                              <div className="card-body">
-                                <h5 className="card-title" style={{ fontSize: '16px' }}>Active Customers</h5>
-                                <p className="card-text" style={{ fontSize: '24px', fontWeight: 'bold' }}>
-                                  {counts.customers}
-                                </p>
-                                <p className="card-text" style={{ fontSize: '14px' }}>View and manage all active customers.</p>
-                              </div>
-                            </div>
+                          <MdPrint 
+                            className="cursor-pointer" 
+                            size={24} 
+                            onClick={downloadDriverReport}
+                            title="Download Driver Report"
+                            style={{ 
+                              cursor: 'pointer',
+                              color: 'white',
+                              transition: 'transform 0.2s',
+                              ':hover': {
+                                transform: 'scale(1.1)'
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-sm-4">
+                    <div className="card text-white bg-warning mb-3">
+                      <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-start">
+                          <div>
+                            <h5 className="card-title" style={{ fontSize: '16px' }}>Active Customers</h5>
+                            <p className="card-text" style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                              {counts.customers}
+                            </p>
+                            <p className="card-text" style={{ fontSize: '14px' }}>View and manage all active customers.</p>
                           </div>
+                          <MdPrint 
+                            className="cursor-pointer" 
+                            size={24} 
+                            onClick={downloadCustomerReport}
+                            title="Download Customer Report"
+                            style={{ 
+                              cursor: 'pointer',
+                              color: 'white',
+                              transition: 'transform 0.2s',
+                              ':hover': {
+                                transform: 'scale(1.1)'
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                           <div className="col-sm-4">
                             <div className="card text-white bg-info mb-3">
                               <div className="card-body">

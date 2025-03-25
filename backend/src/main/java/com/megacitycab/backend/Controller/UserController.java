@@ -282,7 +282,7 @@ public ResponseEntity<User> updateCustomer(
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        // Update only allowed fields for customers
+      
         if (updatedCustomer.getName() != null) {
             existingUser.setName(updatedCustomer.getName());
         }
@@ -307,5 +307,28 @@ public ResponseEntity<User> updateCustomer(
     }
 }
 
+
+
+@GetMapping("/driver-report")
+public ResponseEntity<List<Map<String, Object>>> getDriverReport() {
+    try {
+        List<Map<String, Object>> report = userService.generateDriverReport();
+        return new ResponseEntity<>(report, HttpStatus.OK);
+    } catch (Exception e) {
+        logger.error("Error generating driver report: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+@GetMapping("/customer-report")
+public ResponseEntity<List<Map<String, Object>>> getCustomerReport() {
+    try {
+        List<Map<String, Object>> report = userService.generateCustomerReport();
+        return new ResponseEntity<>(report, HttpStatus.OK);
+    } catch (Exception e) {
+        logger.error("Error generating customer report: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
 }

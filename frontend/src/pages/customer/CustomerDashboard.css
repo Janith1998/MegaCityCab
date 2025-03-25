@@ -1,256 +1,207 @@
 /* Sidebar Styling */
 .bg-dark {
-    background-color: #343a40 !important;
-  }
-  
-  .min-vh-100 {
-    min-height: 100vh;
-  }
-  
-  /* Sidebar Links */
-  .nav-link {
-    color: #ffffff !important;
-    padding: 10px 15px;
-    margin: 5px 0;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-  }
-  
-  .nav-link:hover {
-    background-color: #495057; /* Hover background color */
-    color: #ffffff !important;
-  }
-  
-  /* Active Link Styling */
-  .nav-link.active {
-    background-color: #007bff; /* Active link background color */
-    color: #ffffff !important;
-  }
-  
-  /* Sidebar Toggle Button */
-  .navbar-toggler {
-    border: none;
-    outline: none;
-  }
-  
-  .navbar-toggler:focus {
-    box-shadow: none;
-  }
-  
-  /* Sidebar Collapse Animation */
-  .collapse {
-    transition: all 0.3s ease;
-  }
-  
-  /* Sidebar Shadow */
-  .bg-dark {
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Sidebar Border */
-  .bg-dark {
-    border-right: 1px solid #495057;
-  }
-  
-  /* Sidebar Header */
-  .sidebar-header {
-    padding: 20px;
-    text-align: center;
-    border-bottom: 1px solid #495057;
-  }
-  
-  /* Sidebar Footer (Optional) */
-  .sidebar-footer {
-    padding: 20px;
-    text-align: center;
-    border-top: 1px solid #495057;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-  }
+  background-color: #343a40 !important;
+}
 
-
-
-
-
-
-  /* BookRide Container */
-.book-ride-container {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  padding: 20px;
-  background-color: #f8f9fa;
+.min-vh-100 {
   min-height: 100vh;
+}
+
+/* Sidebar Links */
+.nav-link {
+  color: #ffffff !important;
+  padding: 10px 15px;
+  margin: 5px 0;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: #495057; /* Hover background color */
+  color: #ffffff !important;
+}
+
+/* Active Link Styling */
+.nav-link.active {
+  background-color: #007bff; /* Active link background color */
+  color: #ffffff !important;
+}
+
+/* Sidebar Toggle Button */
+.navbar-toggler {
+  border: none;
+  outline: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/* Sidebar Collapse Animation */
+.collapse {
+  transition: all 0.3s ease;
+}
+
+/* Sidebar Shadow */
+.bg-dark {
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar Border */
+.bg-dark {
+  border-right: 1px solid #495057;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #495057;
+}
+
+/* Sidebar Footer (Optional) */
+.sidebar-footer {
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #495057;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+
+
+
+
+
+/* BookRide Container */
+.book-ride-container {
+display: flex;
+flex-direction: row;
+gap: 20px;
+padding: 20px;
+background-color: #f8f9fa;
+min-height: 100vh;
 }
 
 /* Booking Form */
 .booking-form {
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  width: 100%;
-  max-width: 500px;
+background-color: #ffffff;
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+padding: 24px;
+width: 100%;
+max-width: 500px;
 }
 
 .booking-form h3 {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #343a40;
+font-size: 24px;
+font-weight: 600;
+margin-bottom: 20px;
+color: #343a40;
 }
 
 .booking-form .form-label {
-  font-weight: 500;
-  color: #495057;
+font-weight: 500;
+color: #495057;
 }
 
 .booking-form .form-control {
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  padding: 10px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
+border-radius: 8px;
+border: 1px solid #ced4da;
+padding: 10px;
+font-size: 14px;
+transition: border-color 0.3s ease;
 }
 
 .booking-form .form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+border-color: #007bff;
+box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
 .booking-form .list-group {
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 5px;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+margin-top: 5px;
 }
 
 .booking-form .list-group-item {
-  cursor: pointer;
-  padding: 10px;
-  border: none;
-  border-bottom: 1px solid #e9ecef;
-  transition: background-color 0.3s ease;
+cursor: pointer;
+padding: 10px;
+border: none;
+border-bottom: 1px solid #e9ecef;
+transition: background-color 0.3s ease;
 }
 
 .booking-form .list-group-item:hover {
-  background-color: #f8f9fa;
+background-color: #f8f9fa;
 }
 
 .booking-form .btn-primary {
-  background-color: #007bff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
+background-color: #007bff;
+border: none;
+border-radius: 8px;
+padding: 10px 20px;
+font-size: 16px;
+font-weight: 500;
+transition: background-color 0.3s ease;
 }
 
 .booking-form .btn-primary:hover {
-  background-color: #0056b3;
+background-color: #0056b3;
 }
 
 .booking-form .btn-primary:active {
-  background-color: #004080;
+background-color: #004080;
 }
 
 /* Price Display */
 .price-display {
-  font-size: 18px;
-  font-weight: 600;
-  color: #28a745;
-  margin-top: 15px;
+font-size: 18px;
+font-weight: 600;
+color: #28a745;
+margin-top: 15px;
 }
 
 /* Map Section */
 .map-section {
-  flex: 1;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+flex: 1;
+border-radius: 12px;
+overflow: hidden;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .leaflet-container {
-  height: 100%;
-  width: 100%;
-  border-radius: 12px;
+height: 100%;
+width: 100%;
+border-radius: 12px;
 }
 
 /* Route Info */
 .route-info {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-size: 14px;
-  color: #343a40;
+background-color: rgba(255, 255, 255, 0.9);
+border-radius: 8px;
+padding: 10px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+font-size: 14px;
+color: #343a40;
 }
 
 .route-info strong {
-  color: #007bff;
+color: #007bff;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .book-ride-container {
-    flex-direction: column;
-  }
-
-  .booking-form {
-    max-width: 100%;
-  }
-
-  .map-section {
-    height: 400px;
-  }
+.book-ride-container {
+  flex-direction: column;
 }
 
-
-
-/* Footer styling */
-.footer {
-  position: relative;
-  width: 100%;
-  height: 250px; /* Adjust height as needed */
-  background-image: url('../../assets/bg2.jpg');
-  background-size: cover;
-  background-position: center;
-  color: white;
-  text-align: center;
-  overflow: hidden;
-  margin-top: 10px !important; 
+.booking-form {
+  max-width: 100%;
 }
 
-/* Overlay styling */
-.footer-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Adjust opacity as needed */
+.map-section {
+  height: 400px;
 }
-
-/* Footer content styling */
-.footer-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Footer information styling */
-.footer-info {
-  text-align: left;
-}
-
-/* Footer logo styling */
-.footer-logo img {
-  max-width: 100px; /* Adjust size as needed */
-  height: auto;
 }

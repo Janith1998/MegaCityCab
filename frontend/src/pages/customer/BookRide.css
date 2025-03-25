@@ -1,185 +1,70 @@
 .booking-form {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-  }
-  
-  .booking-form-header {
-    display: flex; /* Use flexbox to align items horizontally */
-    align-items: center; /* Vertically center the items */
-    justify-content: space-between; /* Space between text and image */
-    margin-bottom: 20px; /* Add some spacing below the header */
-  }
-  
-  .car-image {
-    width: 150px; /* Adjust the width of the car image */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 10px;
-  }
-  
-  .car-brand {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .price-display {
-    font-size: 18px;
-    font-weight: 600;
-    color: #007bff;
-    margin-top: 10px;
-  }
-
-  .pick-a-cab-button {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .pick-a-cab-button:hover {
-    background: #0056b3;
-  }
-  
-  .btn-primary:disabled {
-    background: #cccccc;
-    cursor: not-allowed;
-  }
-
-.map-section {
-    position: relative; 
-    margin-top: 20px; 
-}
-
-  .route-info {
-    position: absolute; /* Position the route info absolutely within the map container */
-    top: 10px; /* Adjust the top position as needed */
-    left: 10px; /* Adjust the left position as needed */
-    background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000; /* Ensure it is above the map */
-}
-
-
-
-/* Bill Container */
-.bill-container {
-  font-family: 'Arial', sans-serif;
-  color: #333;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  background: #ffffff;
+  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
-/* Bill Header */
-.bill-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.booking-form-header {
+  display: flex; /* Use flexbox to align items horizontally */
+  align-items: center; /* Vertically center the items */
+  justify-content: space-between; /* Space between text and image */
+  margin-bottom: 20px; /* Add some spacing below the header */
 }
 
-.bill-title h2 {
+.car-image {
+  width: 150px !important; 
+  height: auto !important; 
+  border-radius: 10px;
+}
+
+.car-brand {
   font-size: 24px;
-  font-weight: bold;
-  color: #2c3e50;
-  margin: 0;
+  font-weight: 600;
+  color: #333;
 }
 
-.bill-title p {
-  font-size: 14px;
-  color: #7f8c8d;
-  margin: 0;
+.price-display {
+  font-size: 18px;
+  font-weight: 600;
+  color: #007bff;
+  margin-top: 10px;
 }
 
-.bill-contact {
-  text-align: right;
-}
-
-.bill-contact p {
-  font-size: 14px;
-  color: #34495e;
-  margin: 4px 0;
-}
-
-/* Separator Line */
-.bill-separator {
-  border: 0;
-  height: 1px;
-  background: #ddd;
-  margin: 20px 0;
-}
-
-/* Bill Details */
-.bill-details {
-  margin-bottom: 20px;
-}
-
-.bill-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.bill-label {
-  font-weight: bold;
-  color: #34495e;
-}
-
-.bill-value {
-  color: #2c3e50;
-}
-
-/* Bill Table */
-.bill-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.bill-table th,
-.bill-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.bill-table th {
-  background-color: #3498db;
-  color: white;
-  font-weight: bold;
-}
-
-.bill-table tbody tr:hover {
-  background-color: #f1f1f1;
-}
-
-/* Total Amount */
-.bill-total {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+.pick-a-cab-button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.bill-total .bill-label {
-  margin-right: 10px;
+.pick-a-cab-button:hover {
+  background: #0056b3;
 }
 
-/* Bill Footer */
-.bill-footer {
-  text-align: center;
-  font-size: 14px;
-  color: #7f8c8d;
-  margin-top: 20px;
+.btn-primary:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+
+.route-info {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  max-width: 300px;
+}
+
+.custom-routing-instructions {
+  display: none; /* Hide the instructions container */
 }

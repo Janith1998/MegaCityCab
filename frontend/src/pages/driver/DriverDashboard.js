@@ -24,12 +24,12 @@ function DriverDashboard() {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const userId = localStorage.getItem('userId'); // Assuming you store the driver's ID in localStorage
-        if (!userId) {
+        const driverId = localStorage.getItem('userId'); // Assuming you store the driver's ID in localStorage
+        if (!driverId) {
           throw new Error('Driver ID not found');
         }
 
-        const response = await fetch(`http://localhost:8080/bookings/assign-driver/${userId}`);
+        const response = await fetch(`http://localhost:8080/bookings/driver-assigned/${driverId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch bookings');
         }

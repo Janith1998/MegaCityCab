@@ -301,3 +301,35 @@ color: #007bff;
 .btn-icon:hover .text-primary { color: #0b5ed7; }
 .btn-icon:hover .text-warning { color: #ffca2c; }
 .btn-icon:hover .text-danger { color: #bb2d3b; }
+
+
+/* Add these styles to CustomerDashboard.css */
+.rdt_Table {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+}
+
+.rdt_TableHead {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+
+.rdt_TableRow {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.rdt_TableRow:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.rdt_Pagination {
+  border-top: 1px solid #dee2e6;
+  padding: 1rem;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}

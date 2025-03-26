@@ -583,14 +583,14 @@ function AdminDashboard() {
   };
 
   // Handle assigning a driver to a booking
-  const handleAssignDriver = async (bookingId, userId) => {
+  const handleAssignDriver = async (bookingId, driverId) => {
     try {
       const response = await fetch(`http://localhost:8080/bookings/${bookingId}/assign-driver`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ userId: driverId }),
       });
 
       if (!response.ok) {
@@ -598,16 +598,23 @@ function AdminDashboard() {
       }
 
       // Update the booking in the state
-      const updatedBookings = bookings.map((booking) =>
-        booking.id === bookingId ? { ...booking, userId, status: 'Assigned' } : booking
-      );
-      setBookings(updatedBookings);
-
-      alert('Driver assigned successfully!');
+      const updatedBooking = await response.json();
+      setBookings(bookings.map(b => 
+        b.id === bookingId ? { ...b, driverId: updatedBooking.driverId } : b
+      ));
     } catch (error) {
       console.error('Error assigning driver:', error);
-      alert('Failed to assign driver');
     }
+      // const updatedBookings = bookings.map((booking) =>
+      //   booking.id === bookingId ? { ...booking, userId, status: 'Assigned' } : booking
+      // );
+      //setBookings(updatedBookings);
+
+     // alert('Driver assigned successfully!');
+   // } catch (error) {
+      //console.error('Error assigning driver:', error);
+     // alert('Failed to assign driver');
+    //}
   };
 
   // Define columns for the DataTable
@@ -623,7 +630,8 @@ function AdminDashboard() {
         <select
           className="form-select"
           style={{ width: '150px', fontSize: '14px', padding: '5px' }}
-          value={row.userId || ''}
+          // value={row.userId || ''}
+          value={row.driverId || ''} 
           onChange={(e) => handleAssignDriver(row.id, e.target.value)}
         >
           <option value="">Select Driver</option>

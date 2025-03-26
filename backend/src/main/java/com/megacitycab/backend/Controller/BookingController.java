@@ -1,5 +1,6 @@
 package com.megacitycab.backend.Controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,21 +30,23 @@ public class BookingController {
     @Autowired
     private SequenceGeneratorService sequenceGeneratorService;
 
-    // Create a new booking
-    @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
-        try {
-            // Generate a unique booking ID
-            String bookingId = sequenceGeneratorService.generateBookingId();
-            booking.setBookingId(bookingId);
 
-            booking.setStatus("Pending"); // Set default status
-            Booking savedBooking = bookingRepository.save(booking);
-            return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+// Create booking
+    @PostMapping
+public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
+    try {
+        String bookingId = sequenceGeneratorService.generateBookingId();
+        booking.setBookingId(bookingId);
+        booking.setStatus("Pending");
+        booking.setCustomerId(booking.getUserId());  // Set customerId
+        booking.setDriverId(null);                  // No driver initially
+        Booking savedBooking = bookingRepository.save(booking);
+        return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
+    } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+}
 
     // Get all bookings
     @GetMapping
@@ -115,27 +118,45 @@ public class BookingController {
         }
     }
 
-
-    // BookingController.java
 @PutMapping("/{id}/assign-driver")
 public ResponseEntity<Booking> assignDriverToBooking(@PathVariable String id, @RequestBody Map<String, String> payload) {
     try {
-        String userId = payload.get("userId");
+        String driverId = payload.get("userId");
         Booking booking = bookingRepository.findById(id).orElse(null);
         if (booking == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        booking.setUserId(userId);
-        booking.setStatus("Assigned"); // Update status
+        booking.setDriverId(driverId);  // Set driverId instead of userId
+        booking.setStatus("Assigned");
         bookingRepository.save(booking);
 
-        // Send notification to the driver (you can use a notification service here)
-        sendNotificationToUser(userId, "You have been assigned to a new booking!");
-
+        sendNotificationToUser(driverId, "You have been assigned to a new booking!");
         return new ResponseEntity<>(booking, HttpStatus.OK);
     } catch (Exception e) {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+// Get bookings by customer
+@GetMapping("/customer/{customerId}")
+public ResponseEntity<List<Booking>> getBookingsByCustomerId(@PathVariable String customerId) {
+    try {
+        List<Booking> bookings = bookingRepository.findByCustomerId(customerId);
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+// Get bookings by driver
+@GetMapping("/driver/{driverId}")
+public ResponseEntity<List<Booking>> getBookingsByDriverId(@PathVariable String driverId) {
+    try {
+        List<Booking> bookings = bookingRepository.findByDriverId(driverId);
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -227,5 +248,30 @@ public ResponseEntity<Booking> completeBooking(@PathVariable String bookingId) {
     }
 }
 
+// In BookingController.java
+@GetMapping("/user/active/{userId}")
+public ResponseEntity<List<Booking>> getActiveBookingsByUserId(@PathVariable String userId) {
+    try {
+        List<String> statuses = Arrays.asList("Pending", "Assigned", "Confirmed");
+        List<Booking> bookings = bookingRepository.findByUserIdAndStatusIn(userId, statuses);
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+// Get bookings assigned to a specific driver (using driverId)
+@GetMapping("/driver-assigned/{driverId}")
+public ResponseEntity<List<Booking>> getBookingsAssignedToDriver(@PathVariable String driverId) {
+    try {
+        List<Booking> bookings = bookingRepository.findByDriverIdAndStatusIn(
+            driverId, 
+            Arrays.asList("Assigned", "Confirmed")
+        );
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
 }

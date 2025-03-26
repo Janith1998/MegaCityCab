@@ -846,6 +846,7 @@ import { MdCancel, MdVisibility, MdEdit } from 'react-icons/md';
 import ReactPaginate from 'react-paginate';
 import BookRide from './BookRide';
 import '../customer/CustomerDashboard.css';
+import BookingHistory from './BookingHistory';
 
 function CustomerDashboard() {
   const navigate = useNavigate();
@@ -856,6 +857,7 @@ function CustomerDashboard() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showBookingHistory, setShowBookingHistory] = useState(false);
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
@@ -872,12 +874,19 @@ function CustomerDashboard() {
           return;
         }
 
-        const response = await fetch(`http://localhost:8080/bookings/user/${userId}`);
+        const response = await fetch(`http://localhost:8080/bookings/customer/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch bookings');
         }
         const data = await response.json();
-        setBookings(data);
+
+        const filteredBookings = data.filter(booking => 
+          booking.status === 'Pending' || 
+          booking.status === 'Assigned' || 
+          booking.status === 'Confirmed'
+        );
+
+        setBookings(filteredBookings);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -906,12 +915,19 @@ function CustomerDashboard() {
     navigate('/');
   };
 
+  const handleBookingHistoryClick = () => {
+    setShowBookingHistory(true);
+    setShowBookRide(false);
+  };
+
   const handleBookRideClick = () => {
     setShowBookRide(true);
+    setShowBookingHistory(false);
   };
 
   const handleDashboardClick = () => {
     setShowBookRide(false);
+    setShowBookingHistory(false);
   };
 
   // Handle view booking action
@@ -983,7 +999,10 @@ function CustomerDashboard() {
                 </button>
               </li>
               <li className="nav-item">
-                <button className="nav-link text-white btn btn-link p-0 text-start">
+                <button 
+                className={`nav-link text-white btn btn-link p-0 text-start ${showBookingHistory ? 'active' : ''}`}
+                onClick={handleBookingHistoryClick}
+                >
                   Booking History
                 </button>
               </li>
@@ -1013,7 +1032,7 @@ function CustomerDashboard() {
                 <div className="card bg-primary text-white">
                   <div className="card-body">
                     <h4 className="card-title">Welcome Back, {localStorage.getItem('userName')}!</h4>
-                    <p className="card-text">Here's what's happening with your account today.</p>
+                    <p className="card-text">Here's what's happend with your account.</p>
                   </div>
                 </div>
               </div>
@@ -1022,7 +1041,9 @@ function CustomerDashboard() {
             {/* Conditional Rendering */}
             {showBookRide ? (
               <BookRide car={car} />
-            ) : (
+            ) : showBookingHistory ?  (
+              <BookingHistory />
+            ):(
               <>
                 {/* Quick Actions */}
                 <div className="row mb-4">

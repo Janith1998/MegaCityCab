@@ -26,12 +26,15 @@ public class Booking {
     private String additionalMessage;
     private String status; 
 
+    private String customerId;  // Add this
+    private String driverId;    // Add this
+
 
     public Booking() {}
 
     public Booking(String userId, String carId, String pickupLocation, String dropoffLocation,
                    double pickupLat, double pickupLon, double dropoffLat, double dropoffLon,
-                   double price, Date pickupTime, int passengers, String luggage, String additionalMessage) {
+                   double price, Date pickupTime, int passengers, String luggage, String additionalMessage,String customerId, String driverId) {
         this.userId = userId;
         this.carId = carId;
         this.pickupLocation = pickupLocation;
@@ -45,7 +48,10 @@ public class Booking {
         this.passengers = passengers;
         this.luggage = luggage;
         this.additionalMessage = additionalMessage;
-        this.status = "Pending"; // Default status
+        this.status = "Pending"; 
+        this.customerId = customerId;
+        this.driverId = driverId;
+
     }
 
     // Getters and Setters
@@ -175,5 +181,20 @@ public class Booking {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+    public String getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(String driverId) {
+        this.driverId = driverId;
     }
 }

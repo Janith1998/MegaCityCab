@@ -29,30 +29,54 @@
   margin-bottom: 3rem;
 }
 
-.car-card {
+.car-cards {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 10px;
   overflow: hidden;
 }
 
-.car-card:hover {
+.car-cards:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
-.car-image {
+.car-images {
   height: 200px;
   object-fit: cover;
 }
 
+.bookbtn{
+  background-color: #f9bc39 !important;
+  font-weight: 500 !important;
+  color: #282727 !important;
+}
+
+.paginationbtn {
+
+  border: 2px solid #ec9e29 !important; /* Add black outline */
+  color: #474646 !important; /* Text color */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.paginationbtn:hover {
+  background-color: #e0a116 !important; /* Slightly darker on hover */
+  border-color: #dec106 !important;
+}
+
+.paginationbtn:disabled {
+  background-color: #cccccc !important;
+  border-color: #999999 !important;
+  color: #666666 !important;
+}
+
 .book-now-btn {
-  background-color: #3498db;
+  background-color: #f7b11c;
   border: none;
   transition: background-color 0.3s ease;
 }
 
 .book-now-btn:hover {
-  background-color: #2980b9;
+  background-color: #fde443;
 }
 
 .about-section {
@@ -91,17 +115,330 @@
   transform: translateY(-5px);
 }
 
+
+
+/* Modern Contact Section Styles */
 .contact-section {
-  background-color: #f8f9fa;
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
 }
 
-.contact-form {
-  border-radius: 10px;
+.contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-.contact-item i {
-  color: #3498db;
+.contact-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.contact-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.contact-title:after {
+  content: '';
+  position: absolute;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #f7b11c, #ff8c00);
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+.contact-subtitle {
   font-size: 1.2rem;
+  color: #7f8c8d;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.contact-info-card, .contact-form-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1), box-shadow 0.4s ease;
+}
+
+.contact-info-card:hover, .contact-form-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+
+/* Contact Info Card Styles */
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.contact-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #f7b11c, #ff8c00);
+  color: white;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 8px 20px rgba(247, 177, 28, 0.3);
+}
+
+.info-card-header h3 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.info-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: rgba(247, 177, 28, 0.03);
+}
+
+.info-item:hover {
+  background: rgba(247, 177, 28, 0.08);
+  transform: translateX(5px);
+}
+
+.item-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(247, 177, 28, 0.1);
+  color: #f7b11c;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.item-content h4 {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.item-content p {
+  color: #7f8c8d;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Contact Form Card Styles */
+.form-header {
+  margin-bottom: 2rem;
+}
+
+.form-header h3 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.form-header p {
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 1.2rem 1.5rem 1.2rem 3rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: rgba(247, 177, 28, 0.03);
+}
+
+.form-textarea {
+  min-height: 150px;
+  resize: vertical;
+  padding: 1.5rem;
+}
+
+.form-input:focus, .form-textarea:focus {
+  outline: none;
+  border-color: #f7b11c;
+  box-shadow: 0 0 0 3px rgba(247, 177, 28, 0.15);
+  background-color: white;
+}
+
+.form-group i {
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7f8c8d;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus + i {
+  color: #f7b11c;
+}
+
+/* Floating Labels */
+.form-group.floating label {
+  position: absolute;
+  left: 3rem;
+  top: 1.2rem;
+  color: #7f8c8d;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: white;
+  padding: 0 0.5rem;
+}
+
+.form-group.floating .form-input:focus + label,
+.form-group.floating .form-input:not(:placeholder-shown) + label,
+.form-group.floating .form-textarea:focus + label,
+.form-group.floating .form-textarea:not(:placeholder-shown) + label {
+  top: -0.6rem;
+  left: 2rem;
+  font-size: 0.8rem;
+  color: #f7b11c;
+  background: linear-gradient(to bottom, white 50%, rgba(255,255,255,0.8) 50%);
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #f7b11c, #ff8c00);
+  color: white;
+  border: none;
+  padding: 1.2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  box-shadow: 0 8px 20px rgba(247, 177, 28, 0.3);
+  margin-top: 1rem;
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(247, 177, 28, 0.4);
+  background: linear-gradient(135deg, #ff8c00, #f7b11c);
+}
+
+.submit-btn i {
+  transition: transform 0.3s ease;
+}
+
+.submit-btn:hover i {
+  transform: translateX(5px);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .contact-section {
+    padding: 5rem 0;
+  }
+  
+  .contact-title {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .contact-info-card, .contact-form-card {
+    padding: 2rem;
+  }
+  
+  .info-item {
+    padding: 1.2rem;
+    gap: 1.2rem;
+  }
+  
+  .item-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .contact-section {
+    padding: 4rem 0;
+  }
+  
+  .contact-title {
+    font-size: 2rem;
+  }
+  
+  .contact-container {
+    padding: 0 1.5rem;
+  }
+  
+  .contact-info-card, .contact-form-card {
+    padding: 1.5rem;
+  }
+  
+  .contact-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+  
+  .form-input, .form-textarea {
+    padding-left: 2.5rem;
+  }
+  
+  .form-group i {
+    left: 1rem;
+  }
+  
+  .form-group.floating label {
+    left: 2.5rem;
+  }
 }
 
 .footer {
@@ -143,4 +480,164 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+
+
+
+/* Modern Card Styles */
+.car-cards {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  position: relative;
+  border: none;
+}
+
+.car-cards:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.cards-image-container {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.cards-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.car-cards:hover .card-image {
+  transform: scale(1.05);
+}
+
+.cards-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(135deg, #d18903, #cf7900);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cards-content {
+  padding: 20px;
+}
+
+.cards-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.cards-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.cards-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f7b11c;
+  background: rgba(247, 177, 28, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.cards-model {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+}
+
+.cards-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cards-features span {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #34495e;
+  background: #f8f9fa;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.cards-features i {
+  margin-right: 5px;
+  color: #f7b11c;
+}
+
+.book-now-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eaa80f, #eaa80f);
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(247, 177, 28, 0.3);
+  overflow: hidden;
+  position: relative;
+}
+
+.book-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(247, 177, 28, 0.4);
+}
+
+.book-now-btn:active {
+  transform: translateY(0);
+}
+
+.book-now-btn i {
+  transition: transform 0.3s ease;
+}
+
+.book-now-btn:hover i {
+  transform: translateX(3px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-image-container {
+    height: 180px;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+  }
+  
+  .card-features {
+    gap: 8px;
+  }
+  
+  .card-features span {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+  }
 }

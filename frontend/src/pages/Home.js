@@ -90,20 +90,32 @@ const Home = () => {
           <div className="row g-4">
             {currentCars.map((car) => (
               <div className="col-md-4" key={car.id}>
-                <div className="car-card card h-100 border-0 shadow-sm">
-                  <img
-                    src={`data:image/jpeg;base64,${car.image}`}
-                    className="card-img-top car-image"
-                    alt={car.brand}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{car.brand}</h5>
-                    <p className="card-text text-muted">Model: {car.model}</p>
+                <div className="car-cards h-100">
+                  <div className="cards-image-container">
+                    <img
+                      src={`data:image/jpeg;base64,${car.image}`}
+                      className="cards-image"
+                      alt={car.brand}
+                    />
+                    <div className="cards-badge">Available</div>
+                  </div>
+                  <div className="cards-content">
+                    <div className="cards-header">
+                      <h3 className="cards-title">{car.brand}</h3>
+                      <span className="cards-price">Rs:50{car.price}/ per km</span>
+                    </div>
+                    <p className="cards-model">Model: {car.model}</p>
+                    <div className="cards-features">
+                      <span><i className="fas fa-car"></i> {car.type}</span>
+                      <span><i className="fas fa-gas-pump"></i> {car.fuelType}</span>
+                      <span><i className="fas fa-users"></i> {car.seats} seats</span>
+                    </div>
                     <button
-                      className="btn btn-primary w-100 mt-3 book-now-btn"
+                      className="book-now-btn"
                       onClick={() => handleBookNow(car)}
                     >
-                      Book Now
+                      <span>Book Now</span>
+                      <i className="fas fa-arrow-right"></i>
                     </button>
                   </div>
                 </div>
@@ -114,14 +126,14 @@ const Home = () => {
           {/* Pagination */}
           <div className="d-flex justify-content-center mt-5">
             <button
-              className="btn btn-outline-primary me-2"
+              className="btn paginationbtn btn-outline me-2"
               onClick={prevPage}
               disabled={currentPage === 1}
             >
               Previous
             </button>
             <button
-              className="btn btn-outline-primary"
+              className="btn paginationbtn btn-outline"
               onClick={nextPage}
               disabled={currentPage === Math.ceil(cars.length / carsPerPage)}
             >
@@ -230,54 +242,108 @@ const Home = () => {
       </section>
 
       {/* Contact Us Section */}
-      <section className="contact-section py-5 bg-light">
-        <div className="container">
-          <h2 className="section-title text-center mb-5">Contact Us</h2>
-          <div className="row">
-            <div className="col-lg-6 mb-4 mb-lg-0">
-              <div className="contact-info">
-                <div className="contact-item mb-4">
-                  <h5 className="mb-2">
-                    <i className="bi bi-geo-alt-fill me-2"></i> Address</h5>
-                  <p>123 Main Street, Colombo 01, Sri Lanka</p>
+
+        <section className="contact-section">
+          <div className="contact-container">
+            <div className="contact-header">
+              <h2 className="contact-title">Get in Touch</h2>
+              <p className="contact-subtitle">We're here to help and answer any questions</p>
+            </div>
+
+            <div className="contact-grid">
+              {/* Contact Info Card */}
+              <div className="contact-info-card">
+                <div className="info-card-header">
+                  <div className="contact-icon">
+                    <i className="fas fa-comment-dots"></i>
+                  </div>
+                  <h3>Contact Information</h3>
                 </div>
-                <div className="contact-item mb-4">
-                  <h5 className="mb-2"><i className="bi bi-telephone-fill me-2"></i> Phone</h5>
-                  <p>+94 112 345 678</p>
-                </div>
-                <div className="contact-item mb-4">
-                  <h5 className="mb-2"><i className="bi bi-envelope-fill me-2"></i> Email</h5>
-                  <p>info@megacitycab.lk</p>
-                </div>
-                <div className="contact-item">
-                  <h5 className="mb-2"><i className="bi bi-clock-fill me-2"></i> Hours</h5>
-                  <p>24/7 Service Available</p>
+                
+                <div className="info-items">
+                  <div className="info-item">
+                    <div className="item-icon">
+                      <i className="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div className="item-content">
+                      <h4>Our Location</h4>
+                      <p>123 Main Street, Colombo 01, Sri Lanka</p>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="item-icon">
+                      <i className="fas fa-phone-alt"></i>
+                    </div>
+                    <div className="item-content">
+                      <h4>Phone Number</h4>
+                      <p>+94 112 345 678</p>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="item-icon">
+                      <i className="fas fa-envelope"></i>
+                    </div>
+                    <div className="item-content">
+                      <h4>Email Address</h4>
+                      <p>info@megacitycab.lk</p>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="item-icon">
+                      <i className="fas fa-clock"></i>
+                    </div>
+                    <div className="item-content">
+                      <h4>Working Hours</h4>
+                      <p>24/7 Service Available</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="contact-form card p-4 shadow-sm">
-                <h5 className="mb-4">Send us a message</h5>
-                <form>
-                  <div className="mb-3">
-                    <input type="text" className="form-control" placeholder="Your Name" />
+
+              {/* Contact Form Card */}
+              <div className="contact-form-card">
+                <div className="form-header">
+                  <h3>Send Us a Message</h3>
+                  <p>Fill out the form and we'll get back to you</p>
+                </div>
+
+                <form className="modern-form">
+                  <div className="form-group floating">
+                    <input type="text" id="name" className="form-input" placeholder=" " />
+                    <label htmlFor="name">Your Name</label>
+                    <i className="fas fa-user"></i>
                   </div>
-                  <div className="mb-3">
-                    <input type="email" className="form-control" placeholder="Your Email" />
+
+                  <div className="form-group floating">
+                    <input type="email" id="email" className="form-input" placeholder=" " />
+                    <label htmlFor="email">Your Email</label>
+                    <i className="fas fa-envelope"></i>
                   </div>
-                  <div className="mb-3">
-                    <input type="text" className="form-control" placeholder="Subject" />
+
+                  <div className="form-group floating">
+                    <input type="text" id="subject" className="form-input" placeholder=" " />
+                    <label htmlFor="subject">Subject</label>
+                    <i className="fas fa-tag"></i>
                   </div>
-                  <div className="mb-3">
-                    <textarea className="form-control" rows="4" placeholder="Your Message"></textarea>
+
+                  <div className="form-group floating">
+                    <textarea id="message" className="form-textarea" placeholder=" "></textarea>
+                    <label htmlFor="message">Your Message</label>
                   </div>
-                  <button type="submit" className="btn btn-primary w-100">Send Message</button>
+
+                  <button type="submit" className="submit-btn">
+                    <span>Send Message</span>
+                    <i className="fas fa-paper-plane"></i>
+                  </button>
                 </form>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+     
 
       {/* Footer */}
       <footer className="footer py-4 bg-dark text-white">

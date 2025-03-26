@@ -26,7 +26,7 @@ public class PricingService {
         double distance = earthRadius * c; 
 
         
-        double pricePerKm = 10; 
+        double pricePerKm = 50; 
         return distance * pricePerKm;
     }
 }
